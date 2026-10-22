@@ -1,4 +1,5 @@
 ---
+import { url } from '@/lib/url';
 import type { Post } from '@/lib/content';
 import FormattedDate from './FormattedDate.astro';
 
@@ -14,7 +15,7 @@ const { posts, showDescription = true } = Astro.props;
   {
     posts.map((post) => (
       <li>
-        <a href={`/blog/${post.id}/`} class="row">
+        <a href={url(`/blog/${post.id}/`)} class="row">
           <FormattedDate date={post.data.pubDate} />
           <div>
             <h3>

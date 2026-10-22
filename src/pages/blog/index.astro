@@ -1,4 +1,5 @@
 ---
+import { url } from '@/lib/url';
 import PostList from '@/components/PostList.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getPosts, getTags, slugify } from '@/lib/content';
@@ -20,7 +21,7 @@ const byYear = Map.groupBy(posts, (p) => p.data.pubDate.getFullYear());
           <ul class="tags">
             {[...tags].map(([tag, count]) => (
               <li>
-                <a class="tag" href={`/tags/${slugify(tag)}/`}>
+                <a class="tag" href={url(`/tags/${slugify(tag)}/`)}>
                   #{tag} <span class="count">{count}</span>
                 </a>
               </li>

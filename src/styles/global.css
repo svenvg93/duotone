@@ -421,7 +421,7 @@ a.tag:hover,
   background: var(--bg-muted);
 }
 
-/* Code blocks (Shiki dual themes, see astro.config.mjs) */
+/* Code blocks (Shiki dual themes + .code-block wrapper, see astro.config.mjs) */
 .prose pre {
   font-family: var(--font-mono);
   font-size: 0.875rem;
@@ -432,6 +432,75 @@ a.tag:hover,
   border: 1px solid var(--border);
   overflow-x: auto;
   background-color: var(--code-bg) !important;
+}
+
+.code-block {
+  position: relative;
+  margin: 1.5em 0;
+}
+
+.prose .code-block pre {
+  margin: 0;
+}
+
+.code-title {
+  padding: 0.5rem 1.25rem;
+  padding-right: 5.5rem; /* room for the copy button */
+  background: var(--bg-muted);
+  border: 1px solid var(--border);
+  border-bottom: 0;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  color: var(--text-muted);
+  font: 500 0.825rem var(--font-mono);
+  overflow-wrap: anywhere;
+}
+
+.code-title + pre {
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+}
+
+.copy-code {
+  position: absolute;
+  top: 0.45rem;
+  right: 0.45rem;
+  z-index: 1;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elev);
+  color: var(--text-muted);
+  font: 500 0.75rem var(--font-mono);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.code-block:hover .copy-code,
+.copy-code:focus-visible,
+.copy-code[data-copied] {
+  opacity: 1;
+}
+
+.copy-code:hover {
+  color: var(--text);
+}
+
+.copy-code[data-copied] {
+  color: var(--accent-text);
+}
+
+/* No hover on touch screens: always show the button */
+@media (hover: none) {
+  .copy-code {
+    opacity: 1;
+  }
+}
+
+@media print {
+  .copy-code {
+    display: none;
+  }
 }
 
 .astro-code,
@@ -446,8 +515,17 @@ a.tag:hover,
 
 /* Full-bleed code blocks on small screens */
 @media (max-width: 40rem) {
-  .prose pre {
+  .prose pre,
+  .prose .code-block {
     margin-inline: calc(var(--gutter) * -1);
+  }
+
+  .prose .code-block pre {
+    margin-inline: 0;
+  }
+
+  .prose pre,
+  .code-title {
     border-radius: 0;
     border-inline: 0;
   }

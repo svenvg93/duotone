@@ -1,4 +1,5 @@
 ---
+import { url } from '@/lib/url';
 import Icon from '@/components/Icon.astro';
 import ThemeImage from '@/components/ThemeImage.astro';
 import type { Project } from '@/lib/content';
@@ -21,7 +22,7 @@ const linkList = [
 <BaseLayout title={title} description={description} image={cover}>
   <article class="container project">
     <header class="project-head">
-      <p class="eyebrow"><a href="/projects/">Projects</a> / {period ?? date.getFullYear()}</p>
+      <p class="eyebrow"><a href={url('/projects/')}>Projects</a> / {period ?? date.getFullYear()}</p>
       <h1>{title}</h1>
       <p class="lede">{description}</p>
       {

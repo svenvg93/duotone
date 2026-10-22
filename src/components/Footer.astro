@@ -1,4 +1,5 @@
 ---
+import { url } from '@/lib/url';
 import { SITE, SOCIALS } from '@/config';
 import Icon from './Icon.astro';
 ---
@@ -10,7 +11,7 @@ import Icon from './Icon.astro';
       {
         SOCIALS.map((s) => (
           <li>
-            <a href={s.href} aria-label={s.label} title={s.label} rel={s.href.startsWith('http') ? 'me noopener' : undefined}>
+            <a href={url(s.href)} aria-label={s.label} title={s.label} rel={s.href.startsWith('http') ? 'me noopener' : undefined}>
               <Icon name={s.icon} />
             </a>
           </li>

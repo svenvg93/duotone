@@ -11,7 +11,7 @@ Most dark-mode bugs come from one thing: applying the theme **after** the page h
 
 Put a tiny inline script in `<head>` so it runs before the body renders:
 
-```html
+```html title="index.html"
 <script>
   const stored = localStorage.getItem('theme');
   const dark = matchMedia('(prefers-color-scheme: dark)').matches;
@@ -21,7 +21,7 @@ Put a tiny inline script in `<head>` so it runs before the body renders:
 
 ## Drive everything with custom properties
 
-```css
+```css title="global.css"
 :root {
   --bg: #fbfbfa;
   --text: #1b1b1f;

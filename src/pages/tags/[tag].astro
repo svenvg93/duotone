@@ -1,4 +1,5 @@
 ---
+import { url } from '@/lib/url';
 import PostList from '@/components/PostList.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getPosts, getTags, slugify, type Post } from '@/lib/content';
@@ -22,7 +23,7 @@ const { tag, posts } = Astro.props;
 <BaseLayout title={`#${tag}`} description={`Posts tagged “${tag}”.`}>
   <div class="container">
     <header class="page-head">
-      <p class="eyebrow"><a href="/blog/">Blog</a> / tag</p>
+      <p class="eyebrow"><a href={url('/blog/')}>Blog</a> / tag</p>
       <h1>#{tag}</h1>
       <p>{posts.length} {posts.length === 1 ? 'post' : 'posts'}</p>
     </header>

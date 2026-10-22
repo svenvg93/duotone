@@ -2,10 +2,14 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
+import { codeBlock } from './src/lib/shiki-code-block.mjs';
 
 export default defineConfig({
-  // Change this to your production URL (used for RSS, sitemap and canonical links).
-  site: 'https://example.com',
+  // Your production URL (used for RSS, sitemap and canonical links). The GitHub Pages
+  // workflow sets SITE_URL and BASE_PATH; otherwise replace the fallback with your domain.
+  site: process.env.SITE_URL || 'https://example.com',
+  // Sub-path the site is served from, e.g. '/duotone' for user.github.io/duotone/.
+  base: process.env.BASE_PATH || '/',
   integrations: [mdx(), sitemap()],
   markdown: {
     shikiConfig: {
@@ -13,16 +17,8 @@ export default defineConfig({
       themes: { light: 'github-light', dark: 'github-dark-dimmed' },
       defaultColor: false,
       wrap: false,
-      transformers: [
-        {
-          // ```ts title="config.ts" → <pre data-title="config.ts">, used by <CodeTabs> for tab labels.
-          name: 'code-title',
-          pre(node) {
-            const title = this.options.meta?.__raw?.match(/title=["']([^"']+)["']/)?.[1];
-            if (title) node.properties['data-title'] = title;
-          },
-        },
-      ],
+      // Wraps code blocks for the title bar (```ts title="file.ts") and copy button.
+      transformers: [codeBlock()],
     },
   },
 });

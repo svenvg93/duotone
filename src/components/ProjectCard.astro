@@ -1,4 +1,5 @@
 ---
+import { url } from '@/lib/url';
 import type { Project } from '@/lib/content';
 import ThemeImage from './ThemeImage.astro';
 
@@ -23,7 +24,7 @@ const { title, description, cover, coverDark, coverAlt, stack, period, date, sta
       <span>{period ?? date.getFullYear()}</span>
       {status && <span class={`status status--${status}`}>{status}</span>}
     </p>
-    <h3><a href={`/projects/${project.id}/`}>{title}</a></h3>
+    <h3><a href={url(`/projects/${project.id}/`)}>{title}</a></h3>
     <p class="desc">{description}</p>
     {
       stack.length > 0 && (

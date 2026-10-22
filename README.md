@@ -1,13 +1,16 @@
 # Duotone
 
 A minimal blog + portfolio theme for [Astro](https://astro.build) with light/dark mode, theme-aware images,
-project pages and a printable resume. Zero client-side framework: only a few lines of vanilla JS for the
-theme toggle, mobile menu and project filter.
+project pages, a printable resume and code tabs. Zero client-side framework: only a few lines of vanilla JS
+for the theme toggle, mobile menu, project filter, code tabs and copy buttons.
+
+**Demo:** https://svenvg93.github.io/duotone/
 
 ```sh
 npm install
 npm run dev      # http://localhost:4321
 npm run build    # static site in dist/
+npm run check    # type-check
 ```
 
 ## Make it yours
@@ -15,7 +18,7 @@ npm run build    # static site in dist/
 | What                       | Where                                     |
 | -------------------------- | ----------------------------------------- |
 | Name, bio, nav, socials    | `src/config.ts`                           |
-| Production URL             | `site` in `astro.config.mjs`              |
+| Production URL / sub-path  | `site` and `base` in `astro.config.mjs`   |
 | Colours, fonts, spacing    | tokens at the top of `src/styles/global.css` |
 | Home page intro            | `src/pages/index.astro`                   |
 | Avatar (light + dark)      | `src/assets/profile/avatar*.svg`          |
@@ -54,6 +57,18 @@ import diagramDark from '@/assets/blog/diagram-dark.png';
 **Anywhere else**: add `class="only-light"` or `class="only-dark"` to any element.
 
 Unlike `<picture>` + `prefers-color-scheme`, this follows the manual toggle too. Print always uses the light variant.
+
+## Code blocks
+
+Code is highlighted with Shiki in both themes. Add `title="…"` to show a file name above a block:
+
+````md
+```ts title="src/config.ts"
+export const SITE = { title: 'Alex Doe' };
+```
+````
+
+Every block gets a **Copy** button (shown on hover, always visible on touch screens).
 
 ## Code tabs
 
@@ -125,3 +140,17 @@ light colours.
 
 > Social preview images (`og:image`) are only generated from raster covers (PNG/JPG/WebP), since social
 > networks don't render SVG.
+
+## Deploying
+
+Any static host works: run `npm run build` and upload `dist/`. Set `site` in `astro.config.mjs` to your
+URL, and `base` if the site lives under a sub-path. Internal links go through `url()` in
+`src/lib/url.ts`, so they follow `base` automatically.
+
+**GitHub Pages:** `.github/workflows/deploy.yml` type-checks and builds every pull request, and deploys
+`main` to Pages. Enable it under *Settings → Pages → Source: GitHub Actions*. The workflow passes the Pages
+URL and sub-path to the build through `SITE_URL` and `BASE_PATH`, so no config changes are needed.
+
+## License
+
+[MIT](LICENSE)

@@ -1,4 +1,5 @@
 ---
+import { url } from '@/lib/url';
 import Icon from '@/components/Icon.astro';
 import PostList from '@/components/PostList.astro';
 import ProjectCard from '@/components/ProjectCard.astro';
@@ -25,13 +26,13 @@ const projects = (featured.length ? featured : all).slice(0, SITE.homeProjects);
         learn and keep track of what I build.
       </p>
       <div class="cta">
-        <a href="/projects/" class="btn btn--primary">See my work</a>
-        <a href="/resume/" class="btn">Resume</a>
+        <a href={url('/projects/')} class="btn btn--primary">See my work</a>
+        <a href={url('/resume/')} class="btn">Resume</a>
         <ul class="socials">
           {
             SOCIALS.filter((s) => s.icon !== 'rss').map((s) => (
               <li>
-                <a href={s.href} aria-label={s.label} title={s.label} rel="me noopener">
+                <a href={url(s.href)} aria-label={s.label} title={s.label} rel="me noopener">
                   <Icon name={s.icon} />
                 </a>
               </li>
@@ -50,7 +51,7 @@ const projects = (featured.length ? featured : all).slice(0, SITE.homeProjects);
       <section class="container section">
         <div class="section-head">
           <h2>Recent writing</h2>
-          <a href="/blog/" class="link-arrow">
+          <a href={url('/blog/')} class="link-arrow">
             All posts
           </a>
         </div>
@@ -64,7 +65,7 @@ const projects = (featured.length ? featured : all).slice(0, SITE.homeProjects);
       <section class="container section">
         <div class="section-head">
           <h2>Selected projects</h2>
-          <a href="/projects/" class="link-arrow">
+          <a href={url('/projects/')} class="link-arrow">
             All projects
           </a>
         </div>

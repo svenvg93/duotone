@@ -26,12 +26,13 @@ const html = await Astro.slots.render('default');
 const decode = (s: string) =>
   s.replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
 
-// One tab per top-level <pre>; hide all but the first until the script takes over.
+// One tab per code block (wrapped by src/lib/shiki-code-block.mjs); hide all
+// but the first until the script takes over.
 const labels: string[] = [];
-const panels = html.replace(/<pre\b([^>]*)>/g, (_tag, attrs: string) => {
+const panels = html.replace(/<div class="code-block"([^>]*)>/g, (_tag, attrs: string) => {
   const title = attrs.match(/data-title="([^"]*)"/)?.[1] ?? attrs.match(/data-language="([^"]*)"/)?.[1];
   labels.push(decode(title ?? `Tab ${labels.length + 1}`));
-  return `<pre${attrs} role="tabpanel"${labels.length > 1 ? ' hidden' : ''}>`;
+  return `<div class="code-block"${attrs} role="tabpanel"${labels.length > 1 ? ' hidden' : ''}>`;
 });
 ---
 
@@ -88,8 +89,16 @@ const panels = html.replace(/<pre\b([^>]*)>/g, (_tag, attrs: string) => {
     outline-offset: -2px;
   }
 
+  /* The tab already shows the title */
+  .code-tabs :global(.code-block) {
+    margin: 0;
+  }
+
+  .code-tabs :global(.code-title) {
+    display: none;
+  }
+
   .code-tabs :global(pre) {
-    margin: 0 !important;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
   }
@@ -115,7 +124,7 @@ const panels = html.replace(/<pre\b([^>]*)>/g, (_tag, attrs: string) => {
 
     connectedCallback() {
       this.tabs = [...this.querySelectorAll<HTMLButtonElement>(':scope > .tablist > [role="tab"]')];
-      this.panels = [...this.querySelectorAll<HTMLElement>(':scope > pre')];
+      this.panels = [...this.querySelectorAll<HTMLElement>(':scope > .code-block')];
       const id = `ct-${Math.random().toString(36).slice(2, 8)}`;
 
       this.tabs.forEach((tab, i) => {

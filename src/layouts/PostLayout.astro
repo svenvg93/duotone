@@ -1,4 +1,5 @@
 ---
+import { url } from '@/lib/url';
 import type { MarkdownHeading } from 'astro';
 import FormattedDate from '@/components/FormattedDate.astro';
 import ThemeImage from '@/components/ThemeImage.astro';
@@ -38,7 +39,7 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
           <ul class="tags">
             {tags.map((t) => (
               <li>
-                <a class="tag" href={`/tags/${slugify(t)}/`}>
+                <a class="tag" href={url(`/tags/${slugify(t)}/`)}>
                   #{t}
                 </a>
               </li>
@@ -80,7 +81,7 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
       (prev || next) && (
         <nav class="pager" aria-label="More posts">
           {prev ? (
-            <a href={`/blog/${prev.id}/`} class="card">
+            <a href={url(`/blog/${prev.id}/`)} class="card">
               <span class="muted">← Older</span>
               {prev.data.title}
             </a>
@@ -88,7 +89,7 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
             <span />
           )}
           {next && (
-            <a href={`/blog/${next.id}/`} class="card next">
+            <a href={url(`/blog/${next.id}/`)} class="card next">
               <span class="muted">Newer →</span>
               {next.data.title}
             </a>
