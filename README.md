@@ -6,6 +6,13 @@ for the theme toggle, mobile menu, project filter, code tabs and copy buttons.
 
 **Demo:** https://svenvg93.github.io/duotone/
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/screenshots/home-dark.png" />
+  <img src=".github/screenshots/home-light.png" alt="The Duotone home page: an intro with a portrait, buttons and recent posts as cards" />
+</picture>
+
+The screenshot follows your GitHub theme. [Light and dark side by side](.github/screenshots/duotone.png).
+
 ```sh
 npm install
 npm run dev      # http://localhost:4321
