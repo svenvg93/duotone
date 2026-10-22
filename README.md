@@ -25,6 +25,7 @@ npm run check    # type-check
 | Resume                     | `src/data/resume.json`                    |
 | Blog posts                 | `src/content/blog/*.md(x)`                |
 | Projects                   | `src/content/projects/*.md(x)`            |
+| About & other pages        | `src/pages/*.mdx` with `PageLayout`       |
 
 ## Home page
 
@@ -50,6 +51,26 @@ export const HOME: HomeConfig = {
 ```
 
 The projects section shows projects with `featured: true`, or all projects if none are featured.
+
+## About and other pages
+
+`src/pages/about.mdx` is a plain MDX page using `src/layouts/PageLayout.astro`. Add more pages the same way
+(`uses.mdx` → `/uses/`, `now.mdx` → `/now/`) and link them from `NAV` in `src/config.ts`:
+
+```mdx
+---
+layout: '@/layouts/PageLayout.astro'
+title: Uses
+description: Optional lead paragraph, also the meta description.
+portrait: true # show HOME.avatar next to the title
+---
+
+The hardware and software I use every day…
+```
+
+Callouts, heading links, code blocks and components all work, and pages are included in search. In MDX
+pages `url` is a reserved name (the page's own URL), so import the base-path helper under another name:
+`import { url as withBase } from '@/lib/url'`.
 
 ## Dark / light mode
 

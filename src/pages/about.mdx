@@ -1,0 +1,40 @@
+---
+layout: '@/layouts/PageLayout.astro'
+title: About
+description: Software engineer in Amsterdam, working on developer platforms and the tools around them.
+portrait: true
+---
+
+import { SITE } from '@/config';
+// `url` is reserved in MDX pages (it's the page's own URL), so the helper is renamed.
+import { url as withBase } from '@/lib/url';
+
+I'm Alex, a software engineer with about eight years of experience. These days I lead the internal
+developer platform at Acme Cloud: the CI, preview environments and deployment tooling that 200+ engineers
+use every day.
+
+Before that I rebuilt analytics dashboards at Northwind Labs and shipped a lot of websites at a small
+agency in Utrecht. The common thread is shortening the loop between writing code and seeing it work.
+
+## What I work on
+
+- **Developer platforms**: CI/CD, preview environments, internal tooling.
+- **Web performance**: fast pages, small bundles, honest metrics.
+- **Writing**: explaining technical decisions so the next person doesn't have to rediscover them.
+
+You'll find the details on my <a href={withBase('/resume/')}>resume</a> and a selection of things I've built under
+<a href={withBase('/projects/')}>projects</a>.
+
+## Now
+
+> [!NOTE]
+> Last updated October 2026. A [now page](https://nownownow.com/about) is a snapshot of what I'm focused on.
+
+- Migrating our build system to remote caching.
+- Writing a series on preview environments.
+- Learning to bake bread that doesn't double as a doorstop.
+
+## Get in touch
+
+The best way to reach me is e-mail: <a href={`mailto:${SITE.email}`}>{SITE.email}</a>. I'm happy to talk
+about platform engineering, speaking at meetups, or interesting roles.

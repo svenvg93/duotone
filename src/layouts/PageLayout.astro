@@ -1,0 +1,75 @@
+---
+/**
+ * Layout for standalone Markdown/MDX pages (about, uses, now, …):
+ *
+ *   ---
+ *   layout: '@/layouts/PageLayout.astro'
+ *   title: About
+ *   description: Optional lead paragraph, also used as the meta description.
+ *   portrait: true   # show HOME.avatar from src/config.ts next to the title
+ *   ---
+ *
+ * The page's URL comes from its file name in src/pages/ (about.mdx → /about/).
+ */
+import ThemeImage from '@/components/ThemeImage.astro';
+import { HOME } from '@/config';
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  frontmatter: {
+    title: string;
+    description?: string;
+    portrait?: boolean;
+  };
+}
+
+const { title, description, portrait } = Astro.props.frontmatter;
+const avatar = portrait ? HOME.avatar : undefined;
+---
+
+<BaseLayout title={title} description={description}>
+  <article class="container page" data-pagefind-body data-pagefind-meta="type:Page">
+    <header class="page-head head">
+      <div>
+        <h1 data-pagefind-meta="title">{title}</h1>
+        {description && <p>{description}</p>}
+      </div>
+      {
+        avatar && (
+          <ThemeImage light={avatar.light} dark={avatar.dark} alt={avatar.alt} class="portrait" loading="eager" width={240} height={240} />
+        )
+      }
+    </header>
+    <div class="prose">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    max-width: var(--prose-w);
+  }
+
+  .head :global(.portrait) {
+    flex: none;
+    width: clamp(5.5rem, 14vw, 8.5rem);
+    height: auto;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+
+  @media (max-width: 40rem) {
+    .head {
+      flex-direction: column-reverse;
+      align-items: flex-start;
+      gap: 1.25rem;
+    }
+  }
+</style>

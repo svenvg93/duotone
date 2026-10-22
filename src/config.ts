@@ -51,6 +51,7 @@ export const NAV = [
   { label: 'Blog', href: '/blog/' },
   { label: 'Projects', href: '/projects/' },
   { label: 'Resume', href: '/resume/' },
+  { label: 'About', href: '/about/' },
 ];
 
 // `icon` must match a key in src/components/Icon.astro
