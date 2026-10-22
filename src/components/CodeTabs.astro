@@ -48,6 +48,37 @@ const panels = html.replace(/<div class="code-block"([^>]*)>/g, (_tag, attrs: st
   </div>
   <Fragment set:html={panels} />
 </code-tabs>
+{
+  /*
+   * Restore a remembered tab before this part of the page is painted. The module
+   * script below only runs after the whole page is parsed, which made the first
+   * tab flash. This runs synchronously, right after the element is parsed.
+   */
+  group && (
+    <script is:inline>
+      (function (el) {
+        var saved;
+        try {
+          saved = localStorage.getItem('code-tabs:' + el.dataset.group);
+        } catch (e) {}
+        if (!saved) return;
+        var tabs = el.querySelectorAll(':scope > .tablist > [role="tab"]');
+        var panels = el.querySelectorAll(':scope > .code-block');
+        var index = Array.prototype.findIndex.call(tabs, function (t) {
+          return t.textContent.trim() === saved;
+        });
+        if (index < 0) return;
+        tabs.forEach(function (t, i) {
+          t.setAttribute('aria-selected', String(i === index));
+          t.tabIndex = i === index ? 0 : -1;
+        });
+        panels.forEach(function (p, i) {
+          p.hidden = i !== index;
+        });
+      })(document.currentScript.previousElementSibling);
+    </script>
+  )
+}
 
 <style>
   .code-tabs {
