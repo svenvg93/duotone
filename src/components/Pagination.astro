@@ -1,0 +1,131 @@
+---
+interface Props {
+  current: number;
+  total: number;
+  /** URL for page n (1-based). */
+  href: (page: number) => string;
+}
+
+const { current, total, href } = Astro.props;
+
+// Page numbers to show: first, last, and current ± 1, with gaps marked as "…".
+const shown = [...new Set([1, current - 1, current, current + 1, total])].filter((n) => n >= 1 && n <= total).sort((a, b) => a - b);
+const items: (number | '…')[] = shown.flatMap((n, i) => (i > 0 && n - shown[i - 1] > 1 ? ['…' as const, n] : [n]));
+---
+
+{
+  total > 1 && (
+    <nav class="pagination" aria-label="Blog pages">
+      {current > 1 ? (
+        <a href={href(current - 1)} rel="prev" class="step">
+          ← Newer
+        </a>
+      ) : (
+        <span class="step" aria-hidden="true" />
+      )}
+      <ol>
+        {items.map((n) =>
+          n === '…' ? (
+            <li class="gap" aria-hidden="true">
+              …
+            </li>
+          ) : (
+            <li>
+              <a href={href(n)} aria-current={n === current ? 'page' : undefined} aria-label={`Page ${n}`}>
+                {n}
+              </a>
+            </li>
+          ),
+        )}
+      </ol>
+      {current < total ? (
+        <a href={href(current + 1)} rel="next" class="step next">
+          Older →
+        </a>
+      ) : (
+        <span class="step" aria-hidden="true" />
+      )}
+    </nav>
+  )
+}
+
+<style>
+  .pagination {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 3rem;
+    font-size: 0.95rem;
+  }
+
+  .step {
+    justify-self: start;
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .step.next {
+    justify-self: end;
+  }
+
+  ol {
+    display: flex;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  ol a,
+  .gap {
+    display: inline-grid;
+    place-items: center;
+    min-width: 2.25rem;
+    height: 2.25rem;
+    padding: 0 0.5rem;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+  }
+
+  ol a {
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  ol a:hover {
+    color: var(--text);
+    background: var(--bg-muted);
+  }
+
+  ol a[aria-current='page'] {
+    color: var(--on-accent);
+    background: var(--accent);
+  }
+
+  .gap {
+    color: var(--text-muted);
+  }
+
+  /* Phones: page numbers on their own row, Newer / Older below */
+  @media (max-width: 40rem) {
+    .pagination {
+      grid-template-columns: 1fr 1fr;
+      row-gap: 1.25rem;
+    }
+
+    ol {
+      grid-column: 1 / -1;
+      grid-row: 1;
+      justify-content: center;
+    }
+
+    ol a,
+    .gap {
+      min-width: 2rem;
+      padding: 0 0.35rem;
+    }
+  }
+</style>

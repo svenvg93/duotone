@@ -1,73 +1,10 @@
 ---
-import { url } from '@/lib/url';
-import PostList from '@/components/PostList.astro';
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import { SITE } from '@/config';
-import { getPosts, getTags, slugify } from '@/lib/content';
+import BlogIndex from '@/components/BlogIndex.astro';
+import { getPosts, paginatePosts } from '@/lib/content';
 
+// Page 1 of the blog; later pages are /blog/page/[page]/ (see SITE.postsPerPage).
 const posts = await getPosts();
-const tags = getTags(posts);
-
-// The compact list is grouped by year, newest first; cards are one list.
-const byYear = Map.groupBy(posts, (p) => p.data.pubDate.getFullYear());
+const pages = paginatePosts(posts);
 ---
 
-<BaseLayout title="Blog" description="Notes and articles on software engineering.">
-  <div class="container">
-    <header class="page-head">
-      <h1>Blog</h1>
-      <p>Long-form notes on things I've built, broken, and learned along the way.</p>
-      {
-        tags.size > 0 && (
-          <ul class="tags">
-            {[...tags].map(([tag, count]) => (
-              <li>
-                <a class="tag" href={url(`/tags/${slugify(tag)}/`)}>
-                  #{tag} <span class="count">{count}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        )
-      }
-    </header>
-
-    {
-      SITE.postList === 'cards' ? (
-        <PostList posts={posts} headingLevel="h2" />
-      ) : (
-        [...byYear].map(([year, list]) => (
-          <section class="year">
-            <h2>{year}</h2>
-            <PostList posts={list} />
-          </section>
-        ))
-      )
-    }
-  </div>
-</BaseLayout>
-
-<style>
-  .page-head .tags {
-    margin-top: 1.5rem;
-  }
-
-  .count {
-    opacity: 0.6;
-    margin-left: 0.3rem;
-  }
-
-  .year {
-    margin-top: 2.5rem;
-  }
-
-  .year h2 {
-    font-family: var(--font-mono);
-    font-size: 0.95rem;
-    font-weight: 500;
-    color: var(--text-muted);
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 0;
-  }
-</style>
+<BlogIndex posts={pages[0]} allPosts={posts} page={1} totalPages={pages.length} />

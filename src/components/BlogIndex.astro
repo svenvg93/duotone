@@ -1,0 +1,99 @@
+---
+// The /blog listing, shared by /blog/ (page 1) and /blog/page/[page]/.
+import Pagination from '@/components/Pagination.astro';
+import PostList from '@/components/PostList.astro';
+import { SITE } from '@/config';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getTags, slugify, type Post } from '@/lib/content';
+import { url } from '@/lib/url';
+
+interface Props {
+  /** Posts on this page. */
+  posts: Post[];
+  /** All posts, for the tag list. */
+  allPosts: Post[];
+  page: number;
+  totalPages: number;
+}
+
+const { posts, allPosts, page, totalPages } = Astro.props;
+const tags = getTags(allPosts);
+const pageHref = (n: number) => url(n === 1 ? '/blog/' : `/blog/page/${n}/`);
+
+// The compact list is grouped by year, newest first; cards are one list.
+const byYear = Map.groupBy(posts, (p) => p.data.pubDate.getFullYear());
+---
+
+<BaseLayout title={page > 1 ? `Blog · Page ${page}` : 'Blog'} description="Notes and articles on software engineering.">
+  <Fragment slot="head">
+    {page > 1 && <link rel="prev" href={pageHref(page - 1)} />}
+    {page < totalPages && <link rel="next" href={pageHref(page + 1)} />}
+  </Fragment>
+  <div class="container">
+    <header class="page-head">
+      <h1>Blog</h1>
+      {
+        page === 1 ? (
+          <>
+            <p>Long-form notes on things I've built, broken, and learned along the way.</p>
+            {tags.size > 0 && (
+              <ul class="tags">
+                {[...tags].map(([tag, count]) => (
+                  <li>
+                    <a class="tag" href={url(`/tags/${slugify(tag)}/`)}>
+                      #{tag} <span class="count">{count}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </>
+        ) : (
+          <p>
+            Page {page} of {totalPages}
+          </p>
+        )
+      }
+    </header>
+
+    {
+      SITE.postList === 'cards' ? (
+        <PostList posts={posts} headingLevel="h2" />
+      ) : (
+        [...byYear].map(([year, list]) => (
+          <section class="year">
+            <h2>{year}</h2>
+            <PostList posts={list} />
+          </section>
+        ))
+      )
+    }
+
+    <Pagination current={page} total={totalPages} href={pageHref} />
+  </div>
+</BaseLayout>
+
+<style>
+  .page-head .tags {
+    margin-top: 1.5rem;
+  }
+
+  .count {
+    opacity: 0.6;
+    margin-left: 0.3rem;
+  }
+
+  .year {
+    margin-top: 2.5rem;
+  }
+
+  .year h2 {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 0;
+  }
+</style>

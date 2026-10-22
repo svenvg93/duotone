@@ -1,4 +1,5 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { SITE } from '@/config';
 
 export type Post = CollectionEntry<'blog'>;
 export type Project = CollectionEntry<'projects'>;
@@ -25,6 +26,14 @@ export function projectsForPost(post: Post, projects: Project[]): Project[] {
 /** Posts that link to a project, newest first. */
 export function postsForProject(project: Project, posts: Post[]): Post[] {
   return posts.filter((post) => post.data.projects.some((ref) => ref.id === project.id));
+}
+
+/** Split posts into pages of SITE.postsPerPage (one page with everything when it's 0). */
+export function paginatePosts(posts: Post[]): Post[][] {
+  const size = SITE.postsPerPage > 0 ? SITE.postsPerPage : posts.length || 1;
+  const pages: Post[][] = [];
+  for (let i = 0; i < posts.length; i += size) pages.push(posts.slice(i, i + size));
+  return pages.length ? pages : [[]];
 }
 
 export function getTags(posts: Post[]): Map<string, number> {

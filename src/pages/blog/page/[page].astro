@@ -1,0 +1,24 @@
+---
+import BlogIndex from '@/components/BlogIndex.astro';
+import { getPosts, paginatePosts, type Post } from '@/lib/content';
+
+// /blog/page/2/ and on; page 1 is /blog/ (src/pages/blog/index.astro).
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  const pages = paginatePosts(posts);
+  return pages.slice(1).map((pagePosts, i) => ({
+    params: { page: String(i + 2) },
+    props: { posts: pagePosts, allPosts: posts, totalPages: pages.length },
+  }));
+}
+
+interface Props {
+  posts: Post[];
+  allPosts: Post[];
+  totalPages: number;
+}
+
+const { posts, allPosts, totalPages } = Astro.props;
+---
+
+<BlogIndex posts={posts} allPosts={allPosts} page={Number(Astro.params.page)} totalPages={totalPages} />

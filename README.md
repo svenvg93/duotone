@@ -222,6 +222,10 @@ those posts. A name that doesn't match a project fails the build, so links can't
 then title, description, date, reading time and tags. Posts without a `cover` get a text-only card. Set
 `postList: 'compact'` in `SITE` (`src/config.ts`) for a dense date + title list grouped by year instead.
 
+**Pagination:** `/blog` shows `SITE.postsPerPage` posts per page (default 10), with later pages at
+`/blog/page/2/`, `/blog/page/3/` and so on, and Newer / Older links plus page numbers. Set it to `0` to
+list every post on one page.
+
 ## Projects
 
 ```yaml
