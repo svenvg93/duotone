@@ -1,0 +1,64 @@
+---
+import { SITE, SOCIALS } from '@/config';
+import Icon from './Icon.astro';
+---
+
+<footer class="site-footer">
+  <div class="container inner">
+    <p class="muted">© {new Date().getFullYear()} {SITE.author}</p>
+    <ul class="socials">
+      {
+        SOCIALS.map((s) => (
+          <li>
+            <a href={s.href} aria-label={s.label} title={s.label} rel={s.href.startsWith('http') ? 'me noopener' : undefined}>
+              <Icon name={s.icon} />
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--border);
+    margin-top: 4rem;
+    font-size: 0.9rem;
+  }
+
+  .inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 2rem;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  .socials {
+    display: flex;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .socials a {
+    display: inline-grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+  }
+
+  .socials a:hover {
+    color: var(--text);
+    background: var(--bg-muted);
+  }
+</style>

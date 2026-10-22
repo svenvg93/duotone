@@ -1,0 +1,66 @@
+---
+import ProjectCard from '@/components/ProjectCard.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getProjects } from '@/lib/content';
+
+const projects = await getProjects();
+
+// Technologies used by more than one project become filter buttons.
+const counts = new Map<string, number>();
+for (const s of projects.flatMap((p) => p.data.stack)) counts.set(s, (counts.get(s) ?? 0) + 1);
+const filters = [...counts].filter(([, n]) => n > 1).sort((a, b) => b[1] - a[1]).map(([s]) => s);
+---
+
+<BaseLayout title="Projects" description="Things I've designed, built and shipped.">
+  <div class="container">
+    <header class="page-head">
+      <h1>Projects</h1>
+      <p>A selection of things I've designed, built and shipped — at work and on the side.</p>
+    </header>
+
+    {
+      filters.length > 0 && (
+        <div class="filters tags" role="toolbar" aria-label="Filter by technology">
+          <button class="tag" type="button" data-filter="" aria-pressed="true">
+            All
+          </button>
+          {filters.map((f) => (
+            <button class="tag" type="button" data-filter={f} aria-pressed="false">
+              {f}
+            </button>
+          ))}
+        </div>
+      )
+    }
+
+    <div class="grid projects">
+      {projects.map((p) => <ProjectCard project={p} />)}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .filters {
+    margin-bottom: 1.5rem;
+  }
+
+  .filters button {
+    border: 0;
+    cursor: pointer;
+  }
+</style>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.filters button');
+  const cards = document.querySelectorAll<HTMLElement>('.projects [data-stack]');
+
+  for (const btn of buttons) {
+    btn.addEventListener('click', () => {
+      const filter = btn.dataset.filter ?? '';
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      cards.forEach((card) => {
+        card.hidden = !!filter && !(card.dataset.stack ?? '').split('|').includes(filter);
+      });
+    });
+  }
+</script>

@@ -1,0 +1,56 @@
+---
+/**
+ * An image with an optional dark-mode variant.
+ *
+ * Both variants are rendered and CSS shows the one matching the active theme
+ * (see .only-light / .only-dark in global.css). Unlike <picture> with a
+ * prefers-color-scheme media query, this also follows the manual theme toggle.
+ *
+ * Usage (in .astro or .mdx):
+ *   import diagram from './diagram.png';
+ *   import diagramDark from './diagram-dark.png';
+ *   <ThemeImage light={diagram} dark={diagramDark} alt="Architecture diagram" />
+ *
+ * `light`/`dark` accept imported images (optimized) or URL strings (served as-is).
+ */
+import type { ImageMetadata } from 'astro';
+import type { HTMLAttributes } from 'astro/types';
+import { Image } from 'astro:assets';
+
+type Src = ImageMetadata | string;
+
+interface Props extends Omit<HTMLAttributes<'img'>, 'src' | 'alt' | 'width' | 'height'> {
+  light: Src;
+  dark?: Src;
+  alt: string;
+  width?: number;
+  height?: number;
+  widths?: number[];
+  sizes?: string;
+  caption?: string;
+}
+
+const { light, dark, alt, caption, class: className, loading = 'lazy', ...rest } = Astro.props;
+
+const variants: { src: Src; cls?: string }[] = dark
+  ? [
+      { src: light, cls: 'only-light' },
+      { src: dark, cls: 'only-dark' },
+    ]
+  : [{ src: light }];
+
+const Wrapper = caption ? 'figure' : Fragment;
+---
+
+<Wrapper>
+  {
+    variants.map(({ src, cls }) =>
+      typeof src === 'string' ? (
+        <img src={src} alt={alt} class:list={[className, cls]} loading={loading} decoding="async" {...rest} />
+      ) : (
+        <Image src={src} alt={alt} class:list={[className, cls]} loading={loading} {...(rest as any)} />
+      ),
+    )
+  }
+  {caption && <figcaption>{caption}</figcaption>}
+</Wrapper>

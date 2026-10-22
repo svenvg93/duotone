@@ -1,0 +1,83 @@
+---
+import type { Post } from '@/lib/content';
+import FormattedDate from './FormattedDate.astro';
+
+interface Props {
+  posts: Post[];
+  showDescription?: boolean;
+}
+
+const { posts, showDescription = true } = Astro.props;
+---
+
+<ul class="post-list">
+  {
+    posts.map((post) => (
+      <li>
+        <a href={`/blog/${post.id}/`} class="row">
+          <FormattedDate date={post.data.pubDate} />
+          <div>
+            <h3>
+              {post.data.title}
+              {post.data.draft && <span class="tag">draft</span>}
+            </h3>
+            {showDescription && <p>{post.data.description}</p>}
+          </div>
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .post-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li + li {
+    border-top: 1px solid var(--border);
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 8.5rem 1fr;
+    gap: 1rem;
+    padding: 1.1rem 0;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  time {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    padding-top: 0.15rem;
+  }
+
+  h3 {
+    font-size: 1.1rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .row:hover h3 {
+    color: var(--accent-text);
+  }
+
+  p {
+    margin: 0.3rem 0 0;
+    color: var(--text-muted);
+    font-size: 0.97rem;
+  }
+
+  @media (max-width: 40rem) {
+    .row {
+      grid-template-columns: 1fr;
+      gap: 0.25rem;
+    }
+  }
+</style>

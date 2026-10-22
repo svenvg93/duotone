@@ -1,0 +1,63 @@
+---
+import Icon from './Icon.astro';
+---
+
+<button class="theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode">
+  <Icon name="sun" class="only-light" />
+  <Icon name="moon" class="only-dark" />
+</button>
+
+<style>
+  .theme-toggle {
+    display: inline-grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    background: none;
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+
+  .theme-toggle:hover {
+    color: var(--text);
+    border-color: var(--border);
+  }
+</style>
+
+<script>
+  const root = document.documentElement;
+  const media = window.matchMedia('(prefers-color-scheme: dark)');
+
+  function apply(theme: 'light' | 'dark') {
+    root.dataset.theme = theme;
+    for (const btn of document.querySelectorAll('.theme-toggle')) {
+      btn.setAttribute('aria-pressed', String(theme === 'dark'));
+    }
+  }
+
+  apply(root.dataset.theme === 'dark' ? 'dark' : 'light');
+
+  for (const btn of document.querySelectorAll('.theme-toggle')) {
+    btn.addEventListener('click', () => {
+      const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      apply(next);
+      try {
+        // Explicit choice; if it matches the OS setting, keep following the OS instead.
+        if ((next === 'dark') === media.matches) localStorage.removeItem('theme');
+        else localStorage.setItem('theme', next);
+      } catch {}
+    });
+  }
+
+  // Follow OS changes unless the visitor has made an explicit choice.
+  media.addEventListener('change', (e) => {
+    let stored = null;
+    try {
+      stored = localStorage.getItem('theme');
+    } catch {}
+    if (!stored) apply(e.matches ? 'dark' : 'light');
+  });
+</script>

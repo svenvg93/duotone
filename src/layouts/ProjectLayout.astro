@@ -1,0 +1,182 @@
+---
+import Icon from '@/components/Icon.astro';
+import ThemeImage from '@/components/ThemeImage.astro';
+import type { Project } from '@/lib/content';
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const { title, description, cover, coverDark, coverAlt, role, period, date, status, stack, links } = project.data;
+
+const linkList = [
+  links.demo && { href: links.demo, label: 'Live site', icon: 'external' as const, primary: true },
+  links.repo && { href: links.repo, label: 'Source', icon: 'github' as const },
+  links.docs && { href: links.docs, label: 'Docs', icon: 'book' as const },
+].filter((l) => !!l);
+---
+
+<BaseLayout title={title} description={description} image={cover}>
+  <article class="container project">
+    <header class="project-head">
+      <p class="eyebrow"><a href="/projects/">Projects</a> / {period ?? date.getFullYear()}</p>
+      <h1>{title}</h1>
+      <p class="lede">{description}</p>
+      {
+        linkList.length > 0 && (
+          <div class="links">
+            {linkList.map((l) => (
+              <a href={l.href} class:list={['btn', { 'btn--primary': l.primary }]} rel="noopener">
+                <Icon name={l.icon} /> {l.label}
+              </a>
+            ))}
+          </div>
+        )
+      }
+    </header>
+
+    {
+      cover && (
+        <div class="cover">
+          <ThemeImage light={cover} dark={coverDark} alt={coverAlt} loading="eager" widths={[720, 1200, 1600]} sizes="(max-width: 72rem) 100vw, 1100px" />
+        </div>
+      )
+    }
+
+    <div class="layout">
+      <aside class="facts card">
+        <dl>
+          {
+            role && (
+              <div>
+                <dt>Role</dt>
+                <dd>{role}</dd>
+              </div>
+            )
+          }
+          <div>
+            <dt>Timeline</dt>
+            <dd>{period ?? date.getFullYear()}</dd>
+          </div>
+          {
+            status && (
+              <div>
+                <dt>Status</dt>
+                <dd class="cap">{status}</dd>
+              </div>
+            )
+          }
+          {
+            stack.length > 0 && (
+              <div>
+                <dt>Stack</dt>
+                <dd>
+                  <ul class="tags">
+                    {stack.map((s) => (
+                      <li class="tag">{s}</li>
+                    ))}
+                  </ul>
+                </dd>
+              </div>
+            )
+          }
+        </dl>
+      </aside>
+
+      <div class="prose">
+        <slot />
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .project-head {
+    max-width: 48rem;
+    padding-block: clamp(2.5rem, 7vw, 4.5rem) 2rem;
+  }
+
+  .eyebrow a {
+    color: inherit;
+  }
+
+  .lede {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1.5rem;
+  }
+
+  .cover {
+    margin-bottom: 3rem;
+  }
+
+  .cover :global(img) {
+    width: 100%;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, var(--prose-w)) 18rem;
+    justify-content: space-between;
+    gap: 3rem;
+  }
+
+  .facts {
+    order: 2;
+    align-self: start;
+    position: sticky;
+    top: calc(var(--header-h) + 2rem);
+    padding: 1.25rem;
+    font-size: 0.95rem;
+  }
+
+  dl {
+    margin: 0;
+    display: grid;
+    gap: 1rem;
+  }
+
+  dt {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 0.2rem;
+  }
+
+  dd {
+    margin: 0;
+  }
+
+  .cap {
+    text-transform: capitalize;
+  }
+
+  @media (max-width: 56rem) {
+    .layout {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 2rem;
+    }
+
+    .facts {
+      order: 0;
+      position: static;
+    }
+
+    dl {
+      grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    }
+  }
+</style>

@@ -1,0 +1,215 @@
+---
+import type { MarkdownHeading } from 'astro';
+import FormattedDate from '@/components/FormattedDate.astro';
+import ThemeImage from '@/components/ThemeImage.astro';
+import { readingTime, slugify, type Post } from '@/lib/content';
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  post: Post;
+  headings: MarkdownHeading[];
+  prev?: Post;
+  next?: Post;
+}
+
+const { post, headings, prev, next } = Astro.props;
+const { title, description, pubDate, updatedDate, tags, cover, coverDark, coverAlt } = post.data;
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+---
+
+<BaseLayout title={title} description={description} image={cover} type="article">
+  <article class="container post">
+    <header class="post-head">
+      <p class="eyebrow">
+        <FormattedDate date={pubDate} /> · {readingTime(post.body)}
+        {
+          updatedDate && (
+            <>
+              {' '}
+              · updated <FormattedDate date={updatedDate} />
+            </>
+          )
+        }
+      </p>
+      <h1>{title}</h1>
+      <p class="lede">{description}</p>
+      {
+        tags.length > 0 && (
+          <ul class="tags">
+            {tags.map((t) => (
+              <li>
+                <a class="tag" href={`/tags/${slugify(t)}/`}>
+                  #{t}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </header>
+
+    {
+      cover && (
+        <div class="cover">
+          <ThemeImage light={cover} dark={coverDark} alt={coverAlt} loading="eager" widths={[720, 1200, 1600]} sizes="(max-width: 72rem) 100vw, 1100px" />
+        </div>
+      )
+    }
+
+    <div class:list={['post-body', { 'has-toc': toc.length > 2 }]}>
+      {
+        toc.length > 2 && (
+          <aside class="toc" aria-label="Table of contents">
+            <p class="eyebrow">On this page</p>
+            <ol>
+              {toc.map((h) => (
+                <li class={`d${h.depth}`}>
+                  <a href={`#${h.slug}`}>{h.text}</a>
+                </li>
+              ))}
+            </ol>
+          </aside>
+        )
+      }
+      <div class="prose">
+        <slot />
+      </div>
+    </div>
+
+    {
+      (prev || next) && (
+        <nav class="pager" aria-label="More posts">
+          {prev ? (
+            <a href={`/blog/${prev.id}/`} class="card">
+              <span class="muted">← Older</span>
+              {prev.data.title}
+            </a>
+          ) : (
+            <span />
+          )}
+          {next && (
+            <a href={`/blog/${next.id}/`} class="card next">
+              <span class="muted">Newer →</span>
+              {next.data.title}
+            </a>
+          )}
+        </nav>
+      )
+    }
+  </article>
+</BaseLayout>
+
+<style>
+  .post-head {
+    max-width: var(--prose-w);
+    padding-block: clamp(2.5rem, 7vw, 4.5rem) 2rem;
+  }
+
+  .lede {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+  }
+
+  .cover {
+    margin-bottom: 2.5rem;
+  }
+
+  .cover :global(img) {
+    width: 100%;
+    max-height: 32rem;
+    object-fit: cover;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+
+  .post-body.has-toc {
+    display: grid;
+    grid-template-columns: minmax(0, var(--prose-w)) 14rem;
+    justify-content: space-between;
+    gap: 3rem;
+  }
+
+  .toc {
+    order: 2;
+    position: sticky;
+    top: calc(var(--header-h) + 2rem);
+    align-self: start;
+    font-size: 0.9rem;
+  }
+
+  .toc ol {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0 0.9rem;
+    border-left: 1px solid var(--border);
+  }
+
+  .toc li {
+    margin-bottom: 0.45rem;
+  }
+
+  .toc .d3 {
+    padding-left: 0.9rem;
+  }
+
+  .toc a {
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  .toc a:hover {
+    color: var(--accent-text);
+  }
+
+  @media (max-width: 64rem) {
+    .post-body.has-toc {
+      display: block;
+    }
+
+    .toc {
+      display: none;
+    }
+  }
+
+  .pager {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    max-width: var(--prose-w);
+    margin-top: 4rem;
+  }
+
+  .pager a {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 1rem 1.25rem;
+    color: var(--text);
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .pager a:hover {
+    border-color: var(--accent);
+  }
+
+  .pager .next {
+    text-align: right;
+    grid-column: 2;
+  }
+
+  .pager span {
+    font-size: 0.85rem;
+    font-weight: 400;
+  }
+
+  @media (max-width: 40rem) {
+    .pager {
+      grid-template-columns: 1fr;
+    }
+
+    .pager .next {
+      grid-column: 1;
+    }
+  }
+</style>

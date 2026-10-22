@@ -1,0 +1,114 @@
+---
+title: Preview environments for every pull request
+description: How we gave every PR its own isolated environment in under a minute, and what it changed about code review.
+pubDate: 2024-09-12
+tags: [devops, kubernetes, dx]
+cover: ../../assets/blog/cover.svg
+coverDark: ../../assets/blog/cover-dark.svg
+coverAlt: Abstract wave of coloured dots
+---
+
+import CodeTabs from '@/components/CodeTabs.astro';
+import ThemeImage from '@/components/ThemeImage.astro';
+import diagram from '@/assets/blog/diagram.svg';
+import diagramDark from '@/assets/blog/diagram-dark.svg';
+
+Reviewing a pull request by reading the diff only gets you so far. You also want to **click around** in it.
+
+## The pipeline
+
+Every push runs through four stages. Switch the theme with the toggle in the header and the diagram
+changes with it:
+
+<ThemeImage light={diagram} dark={diagramDark} alt="Push, Build, Preview, Review pipeline" caption="The preview pipeline." />
+
+## Installing the CLI
+
+Pick your package manager. Every snippet in the same group on this page switches with it:
+
+<CodeTabs group="pkg">
+
+```sh title="npm"
+npm install -g shipit-cli
+```
+
+```sh title="pnpm"
+pnpm add -g shipit-cli
+```
+
+```sh title="yarn"
+yarn global add shipit-cli
+```
+
+</CodeTabs>
+
+Then configure which services to watch:
+
+<CodeTabs>
+
+```yaml title="shipit.yaml"
+services:
+  - name: api
+    path: services/api
+  - name: web
+    path: apps/web
+preview:
+  ttl: 7d
+  seed: snapshots/small.sql
+```
+
+```json title="shipit.json"
+{
+  "services": [
+    { "name": "api", "path": "services/api" },
+    { "name": "web", "path": "apps/web" }
+  ],
+  "preview": { "ttl": "7d", "seed": "snapshots/small.sql" }
+}
+```
+
+</CodeTabs>
+
+## Building only what changed
+
+The key to speed is not rebuilding the world. We compute which services a diff touches:
+
+```ts
+export async function changedServices(base: string, head: string): Promise<string[]> {
+  const files = await git.diff(['--name-only', `${base}...${head}`]);
+  return services.filter((s) => files.some((f) => f.startsWith(s.path)));
+}
+```
+
+### Caching layers
+
+Docker layer caching does most of the heavy lifting. Order your `Dockerfile` from least to most
+frequently changing.
+
+Kick off a preview manually:
+
+<CodeTabs group="pkg">
+
+```sh title="npm"
+npx shipit deploy --env preview
+```
+
+```sh title="pnpm"
+pnpm dlx shipit deploy --env preview
+```
+
+```sh title="yarn"
+yarn dlx shipit deploy --env preview
+```
+
+</CodeTabs>
+
+## Seeding data
+
+An empty database makes a useless preview. We restore a small, anonymised snapshot on namespace creation.
+
+## Cleaning up
+
+Namespaces are deleted when the PR closes, plus a nightly sweep for anything older than seven days.
+
+> The best infrastructure is the kind reviewers never have to think about.

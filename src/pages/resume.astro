@@ -1,0 +1,350 @@
+---
+import Icon from '@/components/Icon.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { formatResumeDate as fmt, resume } from '@/lib/resume';
+
+const { basics, work = [], education = [], skills = [], languages = [], certificates = [] } = resume;
+const location = [basics.location?.city, basics.location?.countryCode].filter(Boolean).join(', ');
+const host = (url: string) => url.replace(/^https?:\/\//, '').replace(/\/$/, '');
+---
+
+<BaseLayout title="Resume" description={`${basics.name} — ${basics.label}`}>
+  <div class="container resume">
+    <header class="resume-head">
+      <div>
+        <h1>{basics.name}</h1>
+        {basics.label && <p class="label">{basics.label}</p>}
+        <ul class="contact">
+          {
+            location && (
+              <li>
+                <Icon name="pin" size={16} />
+                {location}
+              </li>
+            )
+          }
+          {
+            basics.email && (
+              <li>
+                <Icon name="mail" size={16} />
+                <a href={`mailto:${basics.email}`}>{basics.email}</a>
+              </li>
+            )
+          }
+          {
+            basics.profiles?.map((p) => (
+              <li>
+                <a href={p.url}>{p.username ? `${p.network}/${p.username}` : host(p.url)}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <button class="btn no-print" type="button" onclick="window.print()">
+        <Icon name="download" /> Save as PDF
+      </button>
+    </header>
+
+    {basics.summary && <p class="summary">{basics.summary}</p>}
+
+    <div class="columns">
+      <div class="main">
+        {
+          work.length > 0 && (
+            <section>
+              <h2>Experience</h2>
+              <ol class="timeline">
+                {work.map((job) => (
+                  <li>
+                    <div class="when">
+                      {fmt(job.startDate)} – {fmt(job.endDate)}
+                    </div>
+                    <h3>
+                      {job.position} · {job.url ? <a href={job.url}>{job.name}</a> : job.name}
+                    </h3>
+                    {job.location && <p class="muted small">{job.location}</p>}
+                    {job.summary && <p>{job.summary}</p>}
+                    {job.highlights && job.highlights.length > 0 && (
+                      <ul class="highlights">
+                        {job.highlights.map((h) => (
+                          <li>{h}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                ))}
+              </ol>
+            </section>
+          )
+        }
+
+        {
+          education.length > 0 && (
+            <section>
+              <h2>Education</h2>
+              <ol class="timeline">
+                {education.map((e) => (
+                  <li>
+                    <div class="when">
+                      {e.startDate && fmt(e.startDate)} – {fmt(e.endDate)}
+                    </div>
+                    <h3>{[e.studyType, e.area].filter(Boolean).join(', ')}</h3>
+                    <p class="muted small">{e.institution}</p>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          )
+        }
+      </div>
+
+      <aside class="side">
+        {
+          skills.length > 0 && (
+            <section>
+              <h2>Skills</h2>
+              {skills.map((s) => (
+                <div class="skill">
+                  <h3>{s.name}</h3>
+                  <ul class="tags">
+                    {s.keywords?.map((k) => (
+                      <li class="tag">{k}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </section>
+          )
+        }
+
+        {
+          languages.length > 0 && (
+            <section>
+              <h2>Languages</h2>
+              <dl class="pairs">
+                {languages.map((l) => (
+                  <div>
+                    <dt>{l.language}</dt>
+                    <dd>{l.fluency}</dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+          )
+        }
+
+        {
+          certificates.length > 0 && (
+            <section>
+              <h2>Certificates</h2>
+              <ul class="plain">
+                {certificates.map((c) => (
+                  <li>
+                    <strong>{c.url ? <a href={c.url}>{c.name}</a> : c.name}</strong>
+                    <span class="muted small">
+                      {[c.issuer, c.date && fmt(c.date)].filter(Boolean).join(' · ')}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+      </aside>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .resume-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1.5rem;
+    padding-block: clamp(2.5rem, 7vw, 4.5rem) 1rem;
+  }
+
+  h1 {
+    margin-bottom: 0.2rem;
+  }
+
+  .label {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    margin-bottom: 0.9rem;
+  }
+
+  .contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+  }
+
+  .contact li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .summary {
+    font-size: 1.1rem;
+    max-width: var(--prose-w);
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .columns {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 18rem;
+    gap: 3.5rem;
+  }
+
+  section {
+    margin-top: 2rem;
+  }
+
+  h2 {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+  }
+
+  h3 {
+    font-size: 1.05rem;
+    margin-bottom: 0.15rem;
+  }
+
+  h3 a {
+    color: inherit;
+  }
+
+  .small {
+    font-size: 0.9rem;
+  }
+
+  .timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .timeline > li {
+    position: relative;
+    padding: 0 0 1.75rem 1.5rem;
+    border-left: 1px solid var(--border);
+    break-inside: avoid;
+  }
+
+  .timeline > li:last-child {
+    padding-bottom: 0.5rem;
+  }
+
+  .timeline > li::before {
+    content: '';
+    position: absolute;
+    left: -0.3rem;
+    top: 0.35rem;
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--accent);
+  }
+
+  .when {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 0.2rem;
+  }
+
+  .timeline p {
+    margin-bottom: 0.5rem;
+  }
+
+  .highlights {
+    margin: 0;
+    padding-left: 1.1rem;
+  }
+
+  .highlights li + li {
+    margin-top: 0.3rem;
+  }
+
+  .skill + .skill {
+    margin-top: 1rem;
+  }
+
+  .skill h3 {
+    font-size: 0.95rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .pairs {
+    margin: 0;
+  }
+
+  .pairs div {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.35rem 0;
+    border-bottom: 1px dashed var(--border);
+  }
+
+  .pairs dd {
+    margin: 0;
+    color: var(--text-muted);
+  }
+
+  .plain {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .plain li {
+    display: flex;
+    flex-direction: column;
+  }
+
+  @media (max-width: 52rem) {
+    .columns {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .resume-head {
+      flex-direction: column;
+    }
+  }
+
+  @media print {
+    .resume-head {
+      padding-top: 0;
+    }
+
+    .columns {
+      grid-template-columns: minmax(0, 1fr) 14rem;
+      gap: 2rem;
+    }
+
+    .summary {
+      padding-bottom: 1rem;
+    }
+
+    section {
+      margin-top: 1.25rem;
+    }
+  }
+</style>

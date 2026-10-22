@@ -1,0 +1,70 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json",
+  "basics": {
+    "name": "Alex Doe",
+    "label": "Senior Software Engineer",
+    "email": "hello@example.com",
+    "url": "https://example.com",
+    "summary": "Software engineer with 8+ years of experience building developer platforms and high-traffic web applications. I care about fast feedback loops, boring infrastructure, and interfaces that get out of the way.",
+    "location": { "city": "Amsterdam", "countryCode": "NL" },
+    "profiles": [
+      { "network": "GitHub", "username": "alexdoe", "url": "https://github.com/" },
+      { "network": "LinkedIn", "username": "alexdoe", "url": "https://www.linkedin.com/" }
+    ]
+  },
+  "work": [
+    {
+      "name": "Acme Cloud",
+      "position": "Senior Software Engineer, Platform",
+      "url": "https://example.com",
+      "location": "Amsterdam (hybrid)",
+      "startDate": "2022-03",
+      "summary": "Lead engineer on the internal developer platform used by 200+ engineers.",
+      "highlights": [
+        "Designed a preview-environment system that cut average PR review time by 35%.",
+        "Migrated 60 services from hand-written manifests to a shared deployment toolkit.",
+        "Mentored four engineers; two were promoted within a year."
+      ]
+    },
+    {
+      "name": "Northwind Labs",
+      "position": "Software Engineer",
+      "location": "Remote",
+      "startDate": "2019-01",
+      "endDate": "2022-02",
+      "summary": "Full-stack engineer on the customer-facing analytics product.",
+      "highlights": [
+        "Rebuilt the dashboard frontend, improving Largest Contentful Paint from 4.1s to 1.3s.",
+        "Introduced end-to-end testing in CI, reducing production incidents by roughly half."
+      ]
+    },
+    {
+      "name": "Studio Pixel",
+      "position": "Frontend Developer",
+      "location": "Utrecht",
+      "startDate": "2016-09",
+      "endDate": "2018-12",
+      "highlights": ["Shipped 20+ marketing sites and web apps for clients in retail and culture."]
+    }
+  ],
+  "education": [
+    {
+      "institution": "University of Amsterdam",
+      "area": "Computer Science",
+      "studyType": "BSc",
+      "startDate": "2012-09",
+      "endDate": "2016-07"
+    }
+  ],
+  "skills": [
+    { "name": "Languages", "keywords": ["TypeScript", "Go", "Python", "SQL"] },
+    { "name": "Frontend", "keywords": ["React", "Astro", "CSS", "Accessibility", "Web performance"] },
+    { "name": "Backend & Infra", "keywords": ["Node.js", "PostgreSQL", "Kubernetes", "Terraform", "AWS"] },
+    { "name": "Practices", "keywords": ["CI/CD", "Observability", "Technical writing", "Mentoring"] }
+  ],
+  "languages": [
+    { "language": "Dutch", "fluency": "Native" },
+    { "language": "English", "fluency": "Fluent" }
+  ],
+  "certificates": [{ "name": "Certified Kubernetes Administrator", "issuer": "CNCF", "date": "2023-05" }]
+}

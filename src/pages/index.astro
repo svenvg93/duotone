@@ -1,0 +1,157 @@
+---
+import Icon from '@/components/Icon.astro';
+import PostList from '@/components/PostList.astro';
+import ProjectCard from '@/components/ProjectCard.astro';
+import ThemeImage from '@/components/ThemeImage.astro';
+import { SITE, SOCIALS } from '@/config';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getPosts, getProjects } from '@/lib/content';
+import avatar from '@/assets/profile/avatar.svg';
+import avatarDark from '@/assets/profile/avatar-dark.svg';
+
+const posts = (await getPosts()).slice(0, SITE.homePosts);
+const all = await getProjects();
+const featured = all.filter((p) => p.data.featured);
+const projects = (featured.length ? featured : all).slice(0, SITE.homeProjects);
+---
+
+<BaseLayout>
+  <section class="container hero">
+    <div class="intro">
+      <p class="eyebrow">{SITE.role} · {SITE.location}</p>
+      <h1>Hi, I'm {SITE.author.split(' ')[0]}. I build reliable software for the web.</h1>
+      <p class="lede">
+        I work on developer platforms, distributed systems and the occasional pixel. This is where I write about what I
+        learn and keep track of what I build.
+      </p>
+      <div class="cta">
+        <a href="/projects/" class="btn btn--primary">See my work</a>
+        <a href="/resume/" class="btn">Resume</a>
+        <ul class="socials">
+          {
+            SOCIALS.filter((s) => s.icon !== 'rss').map((s) => (
+              <li>
+                <a href={s.href} aria-label={s.label} title={s.label} rel="me noopener">
+                  <Icon name={s.icon} />
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+    <div class="portrait">
+      <ThemeImage light={avatar} dark={avatarDark} alt={`Portrait of ${SITE.author}`} loading="eager" width={320} height={320} />
+    </div>
+  </section>
+
+  {
+    posts.length > 0 && (
+      <section class="container section">
+        <div class="section-head">
+          <h2>Recent writing</h2>
+          <a href="/blog/" class="link-arrow">
+            All posts
+          </a>
+        </div>
+        <PostList posts={posts} />
+      </section>
+    )
+  }
+
+  {
+    projects.length > 0 && (
+      <section class="container section">
+        <div class="section-head">
+          <h2>Selected projects</h2>
+          <a href="/projects/" class="link-arrow">
+            All projects
+          </a>
+        </div>
+        <div class="grid">
+          {projects.map((p) => (
+            <ProjectCard project={p} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+</BaseLayout>
+
+<style>
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 3rem;
+    padding-block: clamp(3rem, 10vw, 7rem) clamp(1rem, 4vw, 2rem);
+  }
+
+  h1 {
+    max-width: 20ch;
+  }
+
+  .lede {
+    font-size: clamp(1.05rem, 1rem + 0.4vw, 1.25rem);
+    color: var(--text-muted);
+    max-width: 38rem;
+  }
+
+  .cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+
+  .socials {
+    display: flex;
+    gap: 0.25rem;
+    margin: 0 0 0 0.5rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .socials a {
+    display: inline-grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+  }
+
+  .socials a:hover {
+    color: var(--text);
+    background: var(--bg-muted);
+  }
+
+  .portrait :global(img) {
+    width: clamp(10rem, 22vw, 18rem);
+    height: auto;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+
+  @media (max-width: 48rem) {
+    .hero {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .portrait {
+      order: -1;
+    }
+
+    .portrait :global(img) {
+      width: 7rem;
+    }
+
+    .socials {
+      margin-left: 0;
+    }
+  }
+</style>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <rect width="1600" height="900" fill="#121520"/>
+  <rect x="200" y="140" width="1200" height="640" rx="20" fill="#1b1f2d" stroke="#2c3247" stroke-width="2"/>
+  <circle cx="250" cy="185" r="10" fill="#ef4444"/><circle cx="285" cy="185" r="10" fill="#fbbf24"/><circle cx="320" cy="185" r="10" fill="#4ade80"/>
+  <line x1="200" y1="230" x2="1400" y2="230" stroke="#2c3247" stroke-width="2"/>
+  <text x="260" y="320" font-family="ui-monospace,Menlo,monospace" font-size="40" fill="#4ade80">$</text>
+  <text x="300" y="320" font-family="ui-monospace,Menlo,monospace" font-size="40" fill="#e8e8ec">shipit deploy --env preview</text>
+  <text x="260" y="400" font-family="ui-monospace,Menlo,monospace" font-size="34" fill="#6b7290">→ building 3 services…</text>
+  <text x="260" y="460" font-family="ui-monospace,Menlo,monospace" font-size="34" fill="#6b7290">→ pushing images…</text>
+  <text x="260" y="540" font-family="ui-monospace,Menlo,monospace" font-size="34" fill="#4ade80">✓ live at pr-482.preview.dev (41s)</text>
+  <rect x="260" y="600" width="22" height="44" fill="#7c9bff"/>
+</svg>

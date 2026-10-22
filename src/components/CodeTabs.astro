@@ -1,0 +1,186 @@
+---
+/**
+ * Tabbed code blocks for MDX.
+ *
+ *   <CodeTabs group="pkg">
+ *   ```sh title="npm"
+ *   npm install astro
+ *   ```
+ *   ```sh title="pnpm"
+ *   pnpm add astro
+ *   ```
+ *   </CodeTabs>
+ *
+ * Labels come from each block's `title="…"` (falling back to its language).
+ * Tabs that share a `group` stay in sync across the page and the choice is
+ * remembered, so picking "pnpm" once applies to every package-manager snippet.
+ * Without JavaScript the first block is shown.
+ */
+interface Props {
+  group?: string;
+}
+
+const { group } = Astro.props;
+const html = await Astro.slots.render('default');
+
+const decode = (s: string) =>
+  s.replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+
+// One tab per top-level <pre>; hide all but the first until the script takes over.
+const labels: string[] = [];
+const panels = html.replace(/<pre\b([^>]*)>/g, (_tag, attrs: string) => {
+  const title = attrs.match(/data-title="([^"]*)"/)?.[1] ?? attrs.match(/data-language="([^"]*)"/)?.[1];
+  labels.push(decode(title ?? `Tab ${labels.length + 1}`));
+  return `<pre${attrs} role="tabpanel"${labels.length > 1 ? ' hidden' : ''}>`;
+});
+---
+
+<code-tabs class="code-tabs" data-group={group}>
+  <div class="tablist" role="tablist">
+    {
+      labels.map((label, i) => (
+        <button type="button" role="tab" aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1}>
+          {label}
+        </button>
+      ))
+    }
+  </div>
+  <Fragment set:html={panels} />
+</code-tabs>
+
+<style>
+  .code-tabs {
+    display: block;
+    margin: 1.5em 0;
+  }
+
+  .tablist {
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+    background: var(--bg-muted);
+    border: 1px solid var(--border);
+    border-bottom: 0;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  }
+
+  button {
+    flex: none;
+    padding: 0.5rem 1rem;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: none;
+    color: var(--text-muted);
+    font: 500 0.825rem var(--font-mono);
+    cursor: pointer;
+  }
+
+  button:hover {
+    color: var(--text);
+  }
+
+  button[aria-selected='true'] {
+    color: var(--text);
+    border-bottom-color: var(--accent);
+  }
+
+  button:focus-visible {
+    outline-offset: -2px;
+  }
+
+  .code-tabs :global(pre) {
+    margin: 0 !important;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+
+  @media (max-width: 40rem) {
+    .code-tabs {
+      margin-inline: calc(var(--gutter) * -1);
+    }
+
+    .tablist {
+      border-inline: 0;
+      border-radius: 0;
+    }
+  }
+</style>
+
+<script>
+  const KEY = 'code-tabs:';
+
+  class CodeTabs extends HTMLElement {
+    tabs: HTMLButtonElement[] = [];
+    panels: HTMLElement[] = [];
+
+    connectedCallback() {
+      this.tabs = [...this.querySelectorAll<HTMLButtonElement>(':scope > .tablist > [role="tab"]')];
+      this.panels = [...this.querySelectorAll<HTMLElement>(':scope > pre')];
+      const id = `ct-${Math.random().toString(36).slice(2, 8)}`;
+
+      this.tabs.forEach((tab, i) => {
+        tab.id = `${id}-tab-${i}`;
+        tab.setAttribute('aria-controls', `${id}-panel-${i}`);
+        this.panels[i]?.setAttribute('id', `${id}-panel-${i}`);
+        this.panels[i]?.setAttribute('aria-labelledby', tab.id);
+        this.panels[i]?.setAttribute('tabindex', '0');
+        tab.addEventListener('click', () => this.choose(i, true));
+        tab.addEventListener('keydown', (e) => this.onKey(e, i));
+      });
+
+      const group = this.dataset.group;
+      if (group) {
+        let saved: string | null = null;
+        try {
+          saved = localStorage.getItem(KEY + group);
+        } catch {}
+        if (saved) this.selectLabel(saved);
+        window.addEventListener('code-tabs:change', (e) => {
+          const { group: g, label } = (e as CustomEvent).detail;
+          if (g === group) this.selectLabel(label);
+        });
+      }
+    }
+
+    selectLabel(label: string) {
+      const i = this.tabs.findIndex((t) => t.textContent?.trim() === label);
+      if (i >= 0) this.select(i);
+    }
+
+    select(index: number) {
+      this.tabs.forEach((tab, i) => {
+        const on = i === index;
+        tab.setAttribute('aria-selected', String(on));
+        tab.tabIndex = on ? 0 : -1;
+        if (this.panels[i]) this.panels[i].hidden = !on;
+      });
+    }
+
+    /** User-initiated: also sync other tab groups and remember the choice. */
+    choose(index: number, focus = false) {
+      const tab = this.tabs[index];
+      const group = this.dataset.group;
+      if (focus) tab.focus();
+      if (!group) return this.select(index);
+
+      const label = tab.textContent?.trim() ?? '';
+      // Keep this tab in place on screen while other groups above it change height.
+      const top = tab.getBoundingClientRect().top;
+      window.dispatchEvent(new CustomEvent('code-tabs:change', { detail: { group, label } }));
+      window.scrollBy(0, tab.getBoundingClientRect().top - top);
+      try {
+        localStorage.setItem(KEY + group, label);
+      } catch {}
+    }
+
+    onKey(e: KeyboardEvent, i: number) {
+      const last = this.tabs.length - 1;
+      const next = { ArrowRight: i === last ? 0 : i + 1, ArrowLeft: i === 0 ? last : i - 1, Home: 0, End: last }[e.key];
+      if (next === undefined) return;
+      e.preventDefault();
+      this.choose(next, true);
+    }
+  }
+
+  customElements.define('code-tabs', CodeTabs);
+</script>
