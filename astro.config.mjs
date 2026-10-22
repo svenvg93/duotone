@@ -4,6 +4,7 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { satteri } from '@astrojs/markdown-satteri';
 import { callouts } from './src/lib/callouts.mjs';
+import { headingLinks } from './src/lib/heading-links.mjs';
 import { codeBlock } from './src/lib/shiki-code-block.mjs';
 
 export default defineConfig({
@@ -15,7 +16,8 @@ export default defineConfig({
   integrations: [mdx(), sitemap()],
   markdown: {
     // Used for .md and .mdx. Callouts: GitHub-style `> [!NOTE]` alerts.
-    processor: satteri({ hastPlugins: [callouts()] }),
+    // Heading links: a link icon on h2–h4 to share a section.
+    processor: satteri({ hastPlugins: [callouts(), headingLinks()] }),
     shikiConfig: {
       // Dual themes: colours switch with the site's light/dark mode (see global.css).
       themes: { light: 'github-light', dark: 'github-dark-dimmed' },

@@ -83,6 +83,13 @@ What gets indexed is controlled with attributes: `data-pagefind-body` marks cont
 project layouts), `data-pagefind-ignore` leaves parts out (table of contents, prev/next links, project
 details), and `data-pagefind-meta` sets the title and type shown in results.
 
+## Heading links
+
+Headings `h2`–`h4` in posts and projects get a link icon (on hover or keyboard focus, always faintly
+visible on touch screens) so readers can copy a link to that section. It's added by
+`src/lib/heading-links.mjs`, which also assigns the heading ids using the same slugger as Astro, so ids,
+links, the table of contents and search results all agree.
+
 ## Callouts
 
 Use GitHub's alert syntax in `.md` and `.mdx`, so the same Markdown also renders on GitHub:

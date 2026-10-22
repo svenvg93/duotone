@@ -366,6 +366,40 @@ a.tag:hover,
   text-decoration: none;
 }
 
+/* Section link icon (see src/lib/heading-links.mjs) */
+.prose .heading-link {
+  display: inline-flex;
+  vertical-align: middle;
+  margin-left: 0.4em;
+  padding: 0.15em;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.prose :is(h2, h3, h4):hover .heading-link,
+.prose .heading-link:focus-visible,
+.prose :target > .heading-link {
+  opacity: 1;
+}
+
+.prose .heading-link:hover {
+  color: var(--accent-text);
+}
+
+@media (hover: none) {
+  .prose .heading-link {
+    opacity: 0.5;
+  }
+}
+
+@media print {
+  .heading-link {
+    display: none !important;
+  }
+}
+
 .prose ul,
 .prose ol {
   padding-left: 1.4em;
