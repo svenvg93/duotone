@@ -20,11 +20,36 @@ npm run check    # type-check
 | Name, bio, nav, socials    | `src/config.ts`                           |
 | Production URL / sub-path  | `site` and `base` in `astro.config.mjs`   |
 | Colours, fonts, spacing    | tokens at the top of `src/styles/global.css` |
-| Home page intro            | `src/pages/index.astro`                   |
-| Avatar (light + dark)      | `src/assets/profile/avatar*.svg`          |
+| Home page text & sections  | `HOME` in `src/config.ts`                 |
+| Avatar (light + dark)      | `HOME.avatar` (images in `src/assets/profile/`) |
 | Resume                     | `src/data/resume.json`                    |
 | Blog posts                 | `src/content/blog/*.md(x)`                |
 | Projects                   | `src/content/projects/*.md(x)`            |
+
+## Home page
+
+Everything on the home page is set in `HOME` in `src/config.ts`:
+
+```ts
+export const HOME: HomeConfig = {
+  eyebrow: `${SITE.role} · ${SITE.location}`, // '' hides it
+  headline: "Hi, I'm Alex. I build reliable software for the web.",
+  intro: 'I work on developer platforms…',
+  actions: [
+    { label: 'See my work', href: '/projects/', primary: true },
+    { label: 'Resume', href: '/resume/' },
+  ],
+  showSocials: true,
+  avatar: { light: avatar, dark: avatarDark, alt: 'Portrait of Alex Doe' }, // remove to hide
+  sections: [
+    // shown in this order; remove one to hide it
+    { type: 'posts', title: 'Recent writing', count: 5, linkLabel: 'All posts' },
+    { type: 'projects', title: 'Selected projects', count: 4, linkLabel: 'All projects' },
+  ],
+};
+```
+
+The projects section shows projects with `featured: true`, or all projects if none are featured.
 
 ## Dark / light mode
 

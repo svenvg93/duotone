@@ -25,7 +25,7 @@ Items marked ⭐ are the suggested next batch.
 
 ## Setting it up
 
-- [ ] ⭐ **Home page text in config**: move the hero headline and intro from `src/pages/index.astro` to `src/config.ts`.
+- [x] ⭐ **Home page text in config**: move the hero headline and intro from `src/pages/index.astro` to `src/config.ts`.
 - [ ] **About page**
 - [ ] **Language and date format**: make `lang="en"` and the US date format configurable.
 
