@@ -20,14 +20,14 @@ const linkList = [
 ---
 
 <BaseLayout title={title} description={description} image={cover}>
-  <article class="container project">
+  <article class="container project" data-pagefind-body data-pagefind-meta="type:Project">
     <header class="project-head">
       <p class="eyebrow"><a href={url('/projects/')}>Projects</a> / {period ?? date.getFullYear()}</p>
-      <h1>{title}</h1>
+      <h1 data-pagefind-meta="title">{title}</h1>
       <p class="lede">{description}</p>
       {
         linkList.length > 0 && (
-          <div class="links">
+          <div class="links" data-pagefind-ignore>
             {linkList.map((l) => (
               <a href={l.href} class:list={['btn', { 'btn--primary': l.primary }]} rel="noopener">
                 <Icon name={l.icon} /> {l.label}
@@ -51,19 +51,19 @@ const linkList = [
         <dl>
           {
             role && (
-              <div>
+              <div data-pagefind-ignore>
                 <dt>Role</dt>
                 <dd>{role}</dd>
               </div>
             )
           }
-          <div>
+          <div data-pagefind-ignore>
             <dt>Timeline</dt>
             <dd>{period ?? date.getFullYear()}</dd>
           </div>
           {
             status && (
-              <div>
+              <div data-pagefind-ignore>
                 <dt>Status</dt>
                 <dd class="cap">{status}</dd>
               </div>
@@ -72,7 +72,7 @@ const linkList = [
           {
             stack.length > 0 && (
               <div>
-                <dt>Stack</dt>
+                <dt data-pagefind-ignore>Stack</dt>
                 <dd>
                   <ul class="tags">
                     {stack.map((s) => (

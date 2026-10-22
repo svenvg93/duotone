@@ -19,7 +19,7 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 ---
 
 <BaseLayout title={title} description={description} image={cover} type="article">
-  <article class="container post">
+  <article class="container post" data-pagefind-body data-pagefind-meta="type:Post">
     <header class="post-head">
       <p class="eyebrow">
         <FormattedDate date={pubDate} /> · {readingTime(post.body)}
@@ -32,7 +32,7 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
           )
         }
       </p>
-      <h1>{title}</h1>
+      <h1 data-pagefind-meta="title">{title}</h1>
       <p class="lede">{description}</p>
       {
         tags.length > 0 && (
@@ -60,7 +60,7 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
     <div class:list={['post-body', { 'has-toc': toc.length > 2 }]}>
       {
         toc.length > 2 && (
-          <aside class="toc" aria-label="Table of contents">
+          <aside class="toc" aria-label="Table of contents" data-pagefind-ignore>
             <p class="eyebrow">On this page</p>
             <ol>
               {toc.map((h) => (
@@ -79,7 +79,7 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 
     {
       (prev || next) && (
-        <nav class="pager" aria-label="More posts">
+        <nav class="pager" aria-label="More posts" data-pagefind-ignore>
           {prev ? (
             <a href={url(`/blog/${prev.id}/`)} class="card">
               <span class="muted">← Older</span>

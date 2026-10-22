@@ -2,6 +2,7 @@
 import { url } from '@/lib/url';
 import { NAV, SITE } from '@/config';
 import Icon from './Icon.astro';
+import Search from './Search.astro';
 import ThemeToggle from './ThemeToggle.astro';
 
 const path = Astro.url.pathname;
@@ -27,6 +28,7 @@ const isActive = (href: string) => path.startsWith(url(href));
     </nav>
 
     <div class="actions">
+      <Search />
       <ThemeToggle />
       <button class="menu-btn" type="button" aria-controls="site-nav" aria-expanded="false" aria-label="Open menu">
         <Icon name="menu" class="icon-open" />

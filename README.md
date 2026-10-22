@@ -70,6 +70,19 @@ export const SITE = { title: 'Alex Doe' };
 
 Every block gets a **Copy** button (shown on hover, always visible on touch screens).
 
+## Search
+
+Full-text search over posts and projects, powered by [Pagefind](https://pagefind.app). Open it with the
+header button, <kbd>⌘K</kbd> / <kbd>Ctrl K</kbd> or <kbd>/</kbd>; use the arrow keys and <kbd>Enter</kbd> to pick a
+result. Results link to the best-matching section of a page.
+
+`npm run build` runs `pagefind --site dist` after `astro build` to write the index to `dist/pagefind/`. It
+only exists in a build, so in `astro dev` the dialog asks you to use `npm run build && npm run preview`.
+
+What gets indexed is controlled with attributes: `data-pagefind-body` marks content to index (post and
+project layouts), `data-pagefind-ignore` leaves parts out (table of contents, prev/next links, project
+details), and `data-pagefind-meta` sets the title and type shown in results.
+
 ## Callouts
 
 Use GitHub's alert syntax in `.md` and `.mdx`, so the same Markdown also renders on GitHub:
