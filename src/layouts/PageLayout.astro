@@ -16,6 +16,8 @@ import { HOME } from '@/config';
 import BaseLayout from './BaseLayout.astro';
 
 interface Props {
+  /** Absolute path of the .mdx file; used to find its preview card in /og/pages/. */
+  file: string;
   frontmatter: {
     title: string;
     description?: string;
@@ -24,10 +26,11 @@ interface Props {
 }
 
 const { title, description, portrait } = Astro.props.frontmatter;
+const card = 'pages/' + Astro.props.file.replace(/^.*\/src\/pages\//, '').replace(/\.mdx$/, '');
 const avatar = portrait ? HOME.avatar : undefined;
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout title={title} description={description} card={card}>
   <article class="container page" data-pagefind-body data-pagefind-meta="type:Page">
     <header class="page-head head">
       <div>

@@ -22,7 +22,7 @@ const linkList = [
 ].filter((l) => !!l);
 ---
 
-<BaseLayout title={title} description={description} image={cover}>
+<BaseLayout title={title} description={description} image={cover} card={`projects/${project.id}`}>
   <article class="container project" data-pagefind-body data-pagefind-meta="type:Project">
     <header class="project-head">
       <p class="eyebrow"><a href={url('/projects/')}>Projects</a> / {period ?? date.getFullYear()}</p>

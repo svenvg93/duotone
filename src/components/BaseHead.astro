@@ -10,17 +10,19 @@ interface Props {
   title?: string;
   description?: string;
   image?: ImageMetadata;
+  /** Generated preview card to use, e.g. 'blog/my-post' → /og/blog/my-post.png (see src/pages/og). */
+  card?: string;
   type?: 'website' | 'article';
 }
 
-const { title, description = SITE.description, image, type = 'website' } = Astro.props;
+const { title, description = SITE.description, image, card = 'index', type = 'website' } = Astro.props;
 const fullTitle = title ? `${title} · ${SITE.title}` : SITE.title;
 const canonical = new URL(Astro.url.pathname, Astro.site);
-// Social cards don't support SVG, so only raster covers become og:image.
+// A raster cover (PNG/JPG/…) is used as-is; otherwise the generated card. Social sites don't render SVG.
 const ogImage =
   image && image.format !== 'svg'
-    ? new URL((await getImage({ src: image, width: 1200, format: 'jpg' })).src, Astro.site)
-    : undefined;
+    ? { src: new URL((await getImage({ src: image, width: 1200, format: 'jpg' })).src, Astro.site), alt: '' }
+    : { src: new URL(url(`/og/${card}.png`), Astro.site), alt: title ?? SITE.title, width: 1200, height: 630 };
 ---
 
 <meta charset="utf-8" />
@@ -43,8 +45,11 @@ const ogImage =
 <meta property="og:url" content={canonical} />
 <meta property="og:title" content={fullTitle} />
 <meta property="og:description" content={description} />
-{ogImage && <meta property="og:image" content={ogImage} />}
-<meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+<meta property="og:image" content={ogImage.src} />
+{ogImage.width && <meta property="og:image:width" content={String(ogImage.width)} />}
+{ogImage.height && <meta property="og:image:height" content={String(ogImage.height)} />}
+{ogImage.alt && <meta property="og:image:alt" content={ogImage.alt} />}
+<meta name="twitter:card" content="summary_large_image" />
 
 <!--
   Set the theme before first paint to avoid a flash of the wrong colours.

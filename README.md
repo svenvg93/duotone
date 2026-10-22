@@ -247,8 +247,17 @@ education, skills, languages, certificates), so you can reuse it with other JSON
 **Save as PDF** button uses the browser's print dialog; a print stylesheet hides the chrome and forces
 light colours.
 
-> Social preview images (`og:image`) are only generated from raster covers (PNG/JPG/WebP), since social
-> networks don't render SVG.
+## Social preview images
+
+Every page gets a 1200×630 preview image for links shared on social media, Slack, iMessage and so on. A post
+or project with a raster cover (PNG, JPG, WebP) uses that cover. Everything else gets a generated card:
+site name, page type, title, description and details such as the date, in your accent colour.
+
+Cards are built at build time by `src/pages/og/[...route].png.ts` (one per post, project and MDX page,
+plus a site-wide card for every other page) and drawn in `src/lib/og.ts` with
+[Satori](https://github.com/vercel/satori) and the bundled Inter font, so they look the same locally and in
+CI. Edit `renderCard` there to change the design. Social sites need absolute URLs, so set `site` in
+`astro.config.mjs` (the GitHub Pages workflow does this for you).
 
 ## Deploying
 

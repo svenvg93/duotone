@@ -19,7 +19,7 @@ Items marked ⭐ are the suggested next batch.
 
 ## Sharing and engagement
 
-- [ ] **Social preview images**: generate a card per post (title on a theme background), so posts without a PNG/JPG cover still get one.
+- [x] **Social preview images**: generate a card per post (title on a theme background), so posts without a PNG/JPG cover still get one.
 - [ ] **Comments**: optional [giscus](https://giscus.app/) (GitHub Discussions) that follows the light/dark theme.
 - [ ] **Analytics**: a setting for Plausible, Umami or similar.
 

@@ -20,7 +20,7 @@ const { title, description, pubDate, updatedDate, tags, cover, coverDark, coverA
 const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 ---
 
-<BaseLayout title={title} description={description} image={cover} type="article">
+<BaseLayout title={title} description={description} image={cover} card={`blog/${post.id}`} type="article">
   <article class="container post" data-pagefind-body data-pagefind-meta="type:Post">
     <header class="post-head">
       <p class="eyebrow">
