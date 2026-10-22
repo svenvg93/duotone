@@ -210,7 +210,8 @@ draft: true                          # visible in dev only
 ---
 ```
 
-Posts get reading time, a table of contents (when there are 3+ headings, on wide screens), tag pages,
+Posts get reading time, a table of contents that highlights the section you're reading (when there are
+3+ headings, on wide screens), tag pages,
 previous/next links and an RSS feed at `/rss.xml`.
 
 **Linking posts and projects:** list project file names in a post's `projects` field. The post then

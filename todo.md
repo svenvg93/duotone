@@ -6,7 +6,7 @@ Items marked ⭐ are the suggested next batch.
 
 - [x] ⭐ **Search**: [Pagefind](https://pagefind.app/) builds a static index during the build. Add a ⌘K search box in the header.
 - [x] ⭐ **Heading links**: show a `#` link on headings to copy a link to that section.
-- [ ] ⭐ **Current section in "On this page"**: highlight the section being read while scrolling.
+- [x] ⭐ **Current section in "On this page"**: highlight the section being read while scrolling.
 - [x] ⭐ **Callouts**: note, tip and warning boxes in Markdown (GitHub-style `> [!NOTE]`).
 - [ ] **Image zoom**: click a screenshot or diagram to view it larger.
 

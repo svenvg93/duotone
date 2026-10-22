@@ -120,6 +120,53 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
   </article>
 </BaseLayout>
 
+<script>
+  // Highlight the section being read in "On this page".
+  const toc = document.querySelector<HTMLElement>('.toc');
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('.toc a')];
+  const sections = links
+    .map((link) => ({ link, heading: document.getElementById(decodeURIComponent(link.hash.slice(1))) }))
+    .filter((s): s is { link: HTMLAnchorElement; heading: HTMLElement } => s.heading !== null);
+
+  let current: HTMLAnchorElement | undefined;
+
+  function update() {
+    // A heading counts as "reached" once it scrolls under the sticky header (plus a little slack).
+    const line = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 80;
+    const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+    const reached = sections.filter((s) => s.heading.getBoundingClientRect().top <= line + 1);
+    // At the very bottom the last sections may never reach the line; highlight the last one.
+    const active = atBottom ? sections.at(-1) : reached.at(-1);
+
+    if (active?.link === current) return;
+    current?.removeAttribute('aria-current');
+    current = active?.link;
+    if (!current || !toc) return;
+    current.setAttribute('aria-current', 'true');
+
+    // Keep the item visible when the list scrolls (without scrolling the page).
+    const item = current.getBoundingClientRect();
+    const box = toc.getBoundingClientRect();
+    if (item.top < box.top) toc.scrollTop -= box.top - item.top + 8;
+    else if (item.bottom > box.bottom) toc.scrollTop += item.bottom - box.bottom + 8;
+  }
+
+  if (sections.length) {
+    let queued = false;
+    const schedule = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(() => {
+        queued = false;
+        update();
+      });
+    };
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule);
+    update();
+  }
+</script>
+
 <style>
   .post-head {
     max-width: var(--prose-w);
@@ -155,6 +202,11 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
     position: sticky;
     top: calc(var(--header-h) + 2rem);
     align-self: start;
+    /* Long tables of contents scroll on their own (the script keeps the current item in view) */
+    max-height: calc(100dvh - var(--header-h) - 4rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-left: 2px; /* room for the current-section bar */
     font-size: 0.9rem;
   }
 
@@ -166,6 +218,7 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
   }
 
   .toc li {
+    position: relative;
     margin-bottom: 0.45rem;
   }
 
@@ -180,6 +233,23 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 
   .toc a:hover {
     color: var(--accent-text);
+  }
+
+  /* Current section, set by the script below */
+  .toc a[aria-current='true'] {
+    color: var(--accent-text);
+    font-weight: 500;
+  }
+
+  .toc li:has(> a[aria-current='true'])::before {
+    content: '';
+    position: absolute;
+    left: calc(-0.9rem - 1.5px);
+    top: 0.15em;
+    bottom: 0.15em;
+    width: 2px;
+    border-radius: 2px;
+    background: var(--accent);
   }
 
   @media (max-width: 64rem) {
