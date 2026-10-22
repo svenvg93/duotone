@@ -27,7 +27,7 @@ const { tag, posts } = Astro.props;
       <h1>#{tag}</h1>
       <p>{posts.length} {posts.length === 1 ? 'post' : 'posts'}</p>
     </header>
-    <PostList posts={posts} />
+    <PostList posts={posts} headingLevel="h2" />
   </div>
 </BaseLayout>
 

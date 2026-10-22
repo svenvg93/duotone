@@ -2,12 +2,13 @@
 import { url } from '@/lib/url';
 import PostList from '@/components/PostList.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { SITE } from '@/config';
 import { getPosts, getTags, slugify } from '@/lib/content';
 
 const posts = await getPosts();
 const tags = getTags(posts);
 
-// Group posts by year, newest first.
+// The compact list is grouped by year, newest first; cards are one list.
 const byYear = Map.groupBy(posts, (p) => p.data.pubDate.getFullYear());
 ---
 
@@ -32,12 +33,16 @@ const byYear = Map.groupBy(posts, (p) => p.data.pubDate.getFullYear());
     </header>
 
     {
-      [...byYear].map(([year, list]) => (
-        <section class="year">
-          <h2>{year}</h2>
-          <PostList posts={list} />
-        </section>
-      ))
+      SITE.postList === 'cards' ? (
+        <PostList posts={posts} headingLevel="h2" />
+      ) : (
+        [...byYear].map(([year, list]) => (
+          <section class="year">
+            <h2>{year}</h2>
+            <PostList posts={list} />
+          </section>
+        ))
+      )
     }
   </div>
 </BaseLayout>

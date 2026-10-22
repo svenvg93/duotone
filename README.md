@@ -193,6 +193,10 @@ draft: true                          # visible in dev only
 Posts get reading time, a table of contents (when there are 3+ headings, on wide screens), tag pages,
 previous/next links and an RSS feed at `/rss.xml`.
 
+**Post lists** (blog, tags, home) show cards by default: the cover image on the right (on top on phones),
+then title, description, date, reading time and tags. Posts without a `cover` get a text-only card. Set
+`postList: 'compact'` in `SITE` (`src/config.ts`) for a dense date + title list grouped by year instead.
+
 ## Projects
 
 ```yaml

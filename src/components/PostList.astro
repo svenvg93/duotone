@@ -1,43 +1,67 @@
 ---
 import { url } from '@/lib/url';
+import { SITE } from '@/config';
 import type { Post } from '@/lib/content';
 import FormattedDate from './FormattedDate.astro';
+import PostCard from './PostCard.astro';
 
 interface Props {
   posts: Post[];
+  /** Defaults to SITE.postList. */
+  variant?: 'cards' | 'compact';
+  /** Card title level: h2 when the list is the page's main content. */
+  headingLevel?: 'h2' | 'h3';
   showDescription?: boolean;
 }
 
-const { posts, showDescription = true } = Astro.props;
+const { posts, variant = SITE.postList, headingLevel = 'h3', showDescription = true } = Astro.props;
 ---
 
-<ul class="post-list">
-  {
-    posts.map((post) => (
-      <li>
-        <a href={url(`/blog/${post.id}/`)} class="row">
-          <FormattedDate date={post.data.pubDate} />
-          <div>
-            <h3>
-              {post.data.title}
-              {post.data.draft && <span class="tag">draft</span>}
-            </h3>
-            {showDescription && <p>{post.data.description}</p>}
-          </div>
-        </a>
-      </li>
-    ))
-  }
-</ul>
+{
+  variant === 'cards' ? (
+    <ul class="post-cards">
+      {posts.map((post) => (
+        <li>
+          <PostCard post={post} as={headingLevel} />
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <ul class="post-list">
+      {posts.map((post) => (
+        <li>
+          <a href={url(`/blog/${post.id}/`)} class="row">
+            <FormattedDate date={post.data.pubDate} />
+            <div>
+              <h3>
+                {post.data.title}
+                {post.data.draft && <span class="tag">draft</span>}
+              </h3>
+              {showDescription && <p>{post.data.description}</p>}
+            </div>
+          </a>
+        </li>
+      ))}
+    </ul>
+  )
+}
 
 <style>
+  .post-cards {
+    display: grid;
+    gap: 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
   .post-list {
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
-  li + li {
+  .post-list li + li {
     border-top: 1px solid var(--border);
   }
 

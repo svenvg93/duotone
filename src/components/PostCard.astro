@@ -1,0 +1,158 @@
+---
+import { readingTime, type Post } from '@/lib/content';
+import { url } from '@/lib/url';
+import FormattedDate from './FormattedDate.astro';
+import ThemeImage from './ThemeImage.astro';
+
+interface Props {
+  post: Post;
+  /** Heading level for the title: h2 on list pages, h3 below a section heading. */
+  as?: 'h2' | 'h3';
+}
+
+const { post, as: Heading = 'h3' } = Astro.props;
+const { title, description, pubDate, tags, cover, coverDark, coverAlt, draft } = post.data;
+---
+
+<article class:list={['card', 'post-card', { 'has-cover': cover }]}>
+  {
+    cover && (
+      <div class="media">
+        <ThemeImage light={cover} dark={coverDark} alt={coverAlt} widths={[400, 800]} sizes="(max-width: 40rem) 100vw, 320px" />
+      </div>
+    )
+  }
+  <div class="body">
+    <Heading class="title">
+      <a href={url(`/blog/${post.id}/`)}>{title}</a>
+      {draft && <span class="tag">draft</span>}
+    </Heading>
+    <p class="desc">{description}</p>
+    <p class="meta">
+      <FormattedDate date={pubDate} />
+      <span aria-hidden="true">·</span>
+      <span>{readingTime(post.body)}</span>
+      {
+        tags.length > 0 && (
+          <>
+            <span aria-hidden="true">·</span>
+            <span class="post-tags">{tags.slice(0, 3).map((t) => `#${t}`).join(' ')}</span>
+          </>
+        )
+      }
+    </p>
+  </div>
+</article>
+
+<style>
+  .post-card {
+    position: relative;
+    display: grid;
+    overflow: hidden;
+  }
+
+  .post-card.has-cover {
+    grid-template-columns: minmax(0, 1fr) clamp(12rem, 32%, 20rem);
+  }
+
+  .post-card:hover {
+    border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+    box-shadow: var(--shadow);
+  }
+
+  /* Image on the right on wider screens */
+  .media {
+    order: 2;
+    min-height: 11rem;
+    background: var(--bg-muted);
+    border-left: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .media :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .post-card:hover .media :global(img) {
+    transform: scale(1.03);
+  }
+
+  .body {
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem 1.4rem;
+  }
+
+  .title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.2rem;
+    margin-bottom: 0.45rem;
+  }
+
+  /* Whole card is clickable via the title link */
+  .title a {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .title a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .post-card:hover .title a {
+    color: var(--accent-text);
+  }
+
+  .desc {
+    flex: 1;
+    margin-bottom: 0.9rem;
+    color: var(--text-muted);
+    font-size: 0.97rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.5rem;
+    margin: 0;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+  }
+
+  .post-tags {
+    color: var(--accent-text);
+  }
+
+  /* Phones: image on top */
+  @media (max-width: 40rem) {
+    .post-card.has-cover {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .media {
+      order: 0;
+      min-height: 0;
+      aspect-ratio: 16 / 9;
+      border-left: 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .body {
+      padding: 1.1rem 1.15rem;
+    }
+  }
+</style>

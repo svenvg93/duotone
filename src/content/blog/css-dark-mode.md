@@ -3,6 +3,9 @@ title: Dark mode without the flash
 description: A small, dependency-free approach to theme switching that respects system preferences and never flashes the wrong colours.
 pubDate: 2024-06-03
 tags: [css, frontend]
+cover: ../../assets/blog/theme-cover.svg
+coverDark: ../../assets/blog/theme-cover-dark.svg
+coverAlt: A sun on a light half and a moon on a dark half
 ---
 
 Most dark-mode bugs come from one thing: applying the theme **after** the page has painted.

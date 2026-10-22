@@ -10,6 +10,9 @@ export const SITE = {
   role: 'Software Engineer',
   location: 'Amsterdam, NL',
   email: 'hello@example.com',
+  // How posts are listed on the blog, tag and home pages: image cards, or a compact
+  // date + title list (grouped by year on /blog).
+  postList: 'cards' as 'cards' | 'compact',
 };
 
 interface HomeConfig {
