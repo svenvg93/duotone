@@ -28,6 +28,13 @@
   --on-accent: #ffffff;
   --code-bg: #f4f4f1;
   --shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 6px 24px -8px rgb(0 0 0 / 0.08);
+
+  /* Callouts (> [!NOTE] etc.) */
+  --callout-note: #2f5bea;
+  --callout-tip: #1a7f37;
+  --callout-important: #7c3aed;
+  --callout-warning: #a15c07;
+  --callout-caution: #c42b2b;
 }
 
 :root[data-theme='dark'] {
@@ -44,6 +51,12 @@
   --on-accent: #0f1013;
   --code-bg: #16171b;
   --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 28px -10px rgb(0 0 0 / 0.6);
+
+  --callout-note: #7c9bff;
+  --callout-tip: #4ade80;
+  --callout-important: #b197fc;
+  --callout-warning: #fbbf24;
+  --callout-caution: #f87171;
 }
 
 /* ==========================================================================
@@ -410,6 +423,54 @@ a.tag:hover,
 
 .prose th {
   font-weight: 600;
+}
+
+/* Callouts (GitHub-style alerts, see src/lib/callouts.mjs) */
+.callout {
+  --c: var(--callout-note);
+  margin: 1.75em 0;
+  padding: 0.9rem 1.15rem;
+  border-left: 3px solid var(--c);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background: color-mix(in srgb, var(--c) 7%, var(--bg));
+}
+
+.callout--tip {
+  --c: var(--callout-tip);
+}
+
+.callout--important {
+  --c: var(--callout-important);
+}
+
+.callout--warning {
+  --c: var(--callout-warning);
+}
+
+.callout--caution {
+  --c: var(--callout-caution);
+}
+
+.callout-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.4em;
+  color: var(--c);
+  font-weight: 600;
+}
+
+.callout-title svg {
+  flex: none;
+}
+
+.callout > :last-child {
+  margin-bottom: 0;
+}
+
+.callout .code-block,
+.callout pre {
+  margin-inline: 0;
 }
 
 /* Inline code */

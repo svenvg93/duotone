@@ -103,9 +103,16 @@ yarn dlx shipit deploy --env preview
 
 </CodeTabs>
 
+> [!IMPORTANT]
+> Preview environments share the cluster with production workloads. Give them their own node pool and
+> resource quotas.
+
 ## Seeding data
 
 An empty database makes a useless preview. We restore a small, anonymised snapshot on namespace creation.
+
+> [!CAUTION]
+> Never seed previews from a raw production dump. Anonymise **first**, then snapshot.
 
 ## Cleaning up
 

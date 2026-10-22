@@ -70,6 +70,21 @@ export const SITE = { title: 'Alex Doe' };
 
 Every block gets a **Copy** button (shown on hover, always visible on touch screens).
 
+## Callouts
+
+Use GitHub's alert syntax in `.md` and `.mdx`, so the same Markdown also renders on GitHub:
+
+```md
+> [!NOTE]
+> Useful information that users should know.
+
+> [!WARNING] Custom title
+> Text after the marker becomes the title.
+```
+
+Types: `NOTE`, `TIP`, `IMPORTANT`, `WARNING`, `CAUTION`. Colours are the `--callout-*` tokens in
+`global.css`; the plugin is `src/lib/callouts.mjs`. A blockquote without a marker stays a normal quote.
+
 ## Code tabs
 
 In MDX, wrap fenced code blocks in `<CodeTabs>`. Each block's `title="…"` becomes its tab label (falling

@@ -2,6 +2,8 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
+import { satteri } from '@astrojs/markdown-satteri';
+import { callouts } from './src/lib/callouts.mjs';
 import { codeBlock } from './src/lib/shiki-code-block.mjs';
 
 export default defineConfig({
@@ -12,6 +14,8 @@ export default defineConfig({
   base: process.env.BASE_PATH || '/',
   integrations: [mdx(), sitemap()],
   markdown: {
+    // Used for .md and .mdx. Callouts: GitHub-style `> [!NOTE]` alerts.
+    processor: satteri({ hastPlugins: [callouts()] }),
     shikiConfig: {
       // Dual themes: colours switch with the site's light/dark mode (see global.css).
       themes: { light: 'github-light', dark: 'github-dark-dimmed' },
