@@ -13,7 +13,7 @@ Items marked ⭐ are the suggested next batch.
 ## Connecting content
 
 - [ ] **Related posts / series**: a `series` front-matter field, or related posts by shared tags, at the end of a post.
-- [ ] **Link posts and projects**: "Posts about this project" on project pages, and a link back from the post.
+- [x] **Link posts and projects**: "Posts about this project" on project pages, and a link back from the post.
 - [ ] **Project galleries**: several screenshots per project, not just one cover.
 - [ ] **Blog pagination**: only needed once there are about 30 posts.
 

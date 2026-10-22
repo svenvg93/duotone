@@ -204,6 +204,7 @@ description: One-line summary used in lists, RSS and meta tags.
 pubDate: 2024-09-12
 updatedDate: 2024-10-01   # optional
 tags: [css, frontend]
+projects: [shipit]                   # optional: link to projects by file name
 cover: ../../assets/blog/cover.png   # optional (+ coverDark, coverAlt)
 draft: true                          # visible in dev only
 ---
@@ -211,6 +212,10 @@ draft: true                          # visible in dev only
 
 Posts get reading time, a table of contents (when there are 3+ headings, on wide screens), tag pages,
 previous/next links and an RSS feed at `/rss.xml`.
+
+**Linking posts and projects:** list project file names in a post's `projects` field. The post then
+ends with a box linking to each project, and each project page gets a "Writing about …" section with
+those posts. A name that doesn't match a project fails the build, so links can't silently break.
 
 **Post lists** (blog, tags, home) show cards by default: the cover image on the right (on top on phones),
 then title, description, date, reading time and tags. Posts without a `cover` get a text-only card. Set

@@ -1,14 +1,15 @@
 ---
 import { render } from 'astro:content';
 import PostLayout from '@/layouts/PostLayout.astro';
-import { getPosts, type Post } from '@/lib/content';
+import { getPosts, getProjects, projectsForPost, type Post, type Project } from '@/lib/content';
 
 export async function getStaticPaths() {
   const posts = await getPosts();
+  const projects = await getProjects();
   // Posts are sorted newest first, so "next" (newer) is the previous index.
   return posts.map((post, i) => ({
     params: { slug: post.id },
-    props: { post, next: posts[i - 1], prev: posts[i + 1] },
+    props: { post, next: posts[i - 1], prev: posts[i + 1], projects: projectsForPost(post, projects) },
   }));
 }
 
@@ -16,12 +17,13 @@ interface Props {
   post: Post;
   prev?: Post;
   next?: Post;
+  projects: Project[];
 }
 
-const { post, prev, next } = Astro.props;
+const { post, prev, next, projects } = Astro.props;
 const { Content, headings } = await render(post);
 ---
 
-<PostLayout post={post} headings={headings} prev={prev} next={next}>
+<PostLayout post={post} headings={headings} prev={prev} next={next} projects={projects}>
   <Content />
 </PostLayout>

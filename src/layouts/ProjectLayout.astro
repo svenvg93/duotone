@@ -1,15 +1,18 @@
 ---
 import { url } from '@/lib/url';
 import Icon from '@/components/Icon.astro';
+import PostList from '@/components/PostList.astro';
 import ThemeImage from '@/components/ThemeImage.astro';
-import type { Project } from '@/lib/content';
+import type { Post, Project } from '@/lib/content';
 import BaseLayout from './BaseLayout.astro';
 
 interface Props {
   project: Project;
+  /** Posts that link to this project with `projects: [...]`. */
+  posts?: Post[];
 }
 
-const { project } = Astro.props;
+const { project, posts = [] } = Astro.props;
 const { title, description, cover, coverDark, coverAlt, role, period, date, status, stack, links } = project.data;
 
 const linkList = [
@@ -90,6 +93,15 @@ const linkList = [
         <slot />
       </div>
     </div>
+
+    {
+      posts.length > 0 && (
+        <section class="project-posts" aria-labelledby="project-posts-title" data-pagefind-ignore>
+          <h2 id="project-posts-title">Writing about {title}</h2>
+          <PostList posts={posts} />
+        </section>
+      )
+    }
   </article>
 </BaseLayout>
 
@@ -131,6 +143,12 @@ const linkList = [
     grid-template-columns: minmax(0, var(--prose-w)) 18rem;
     justify-content: space-between;
     gap: 3rem;
+  }
+
+  .project-posts {
+    margin-top: 4rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid var(--border);
   }
 
   .facts {

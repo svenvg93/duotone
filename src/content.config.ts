@@ -1,4 +1,4 @@
-import { defineCollection } from 'astro:content';
+import { defineCollection, reference } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
@@ -11,6 +11,8 @@ const blog = defineCollection({
       pubDate: z.coerce.date(),
       updatedDate: z.coerce.date().optional(),
       tags: z.array(z.string()).default([]),
+      // Projects this post is about, by file name: `projects: [shipit]`. Shown on both pages.
+      projects: z.array(reference('projects')).default([]),
       // Optional cover image, plus an optional variant shown in dark mode.
       cover: image().optional(),
       coverDark: image().optional(),

@@ -3,7 +3,7 @@ import { url } from '@/lib/url';
 import type { MarkdownHeading } from 'astro';
 import FormattedDate from '@/components/FormattedDate.astro';
 import ThemeImage from '@/components/ThemeImage.astro';
-import { readingTime, slugify, type Post } from '@/lib/content';
+import { readingTime, slugify, type Post, type Project } from '@/lib/content';
 import BaseLayout from './BaseLayout.astro';
 
 interface Props {
@@ -11,9 +11,11 @@ interface Props {
   headings: MarkdownHeading[];
   prev?: Post;
   next?: Post;
+  /** Projects this post links to with `projects: [...]`. */
+  projects?: Project[];
 }
 
-const { post, headings, prev, next } = Astro.props;
+const { post, headings, prev, next, projects = [] } = Astro.props;
 const { title, description, pubDate, updatedDate, tags, cover, coverDark, coverAlt } = post.data;
 const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 ---
@@ -76,6 +78,24 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
         <slot />
       </div>
     </div>
+
+    {
+      projects.length > 0 && (
+        <aside class="related" aria-label={projects.length === 1 ? 'Related project' : 'Related projects'} data-pagefind-ignore>
+          <p class="eyebrow">{projects.length === 1 ? 'Project' : 'Projects'}</p>
+          <ul>
+            {projects.map((p) => (
+              <li>
+                <a href={url(`/projects/${p.id}/`)} class="card">
+                  <strong>{p.data.title}</strong>
+                  <span class="muted">{p.data.description}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </aside>
+      )
+    }
 
     {
       (prev || next) && (
@@ -170,6 +190,50 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
     .toc {
       display: none;
     }
+  }
+
+  .related {
+    max-width: var(--prose-w);
+    margin-top: 3.5rem;
+  }
+
+  .related ul {
+    display: grid;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .related a {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 1rem 2.75rem 1rem 1.25rem;
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .related a::after {
+    content: '→';
+    position: absolute;
+    right: 1.25rem;
+    top: 50%;
+    translate: 0 -50%;
+    color: var(--text-muted);
+  }
+
+  .related a:hover {
+    border-color: var(--accent);
+  }
+
+  .related a:hover::after {
+    color: var(--accent-text);
+  }
+
+  .related span {
+    font-size: 0.95rem;
   }
 
   .pager {
