@@ -42,7 +42,9 @@ callouts and everything else from [Text and typography](../text-and-typography/)
 
 **On the projects page,** technologies used by more than one project become filter buttons, so visitors can
 show only your Go or TypeScript work. **On a project page,** the role, timeline, status and stack appear in a
-details box next to the text, with buttons for the links.
+details box next to the text, with buttons for the links. An `active` project gets a green dot and a
+`maintained` one a dot in the accent colour. To use a different green, set `--status-active` in the
+[palette](../getting-started/#other-colours).
 
 **On the home page,** the projects section shows projects with `featured: true`, or all projects if none are
 featured, in `order`.

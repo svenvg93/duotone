@@ -1,6 +1,7 @@
-// Accent colour: turns THEME.accent from src/config.ts into the CSS custom
-// properties the theme uses, for light and dark mode. Shades are derived at
-// build time so any accent stays readable (WCAG AA contrast for text).
+// Colours: the light and dark palettes, plus the accent from THEME in
+// src/config.ts, turned into the CSS custom properties the theme uses (injected
+// by ThemeHead.astro). Accent shades are derived at build time so any accent
+// stays readable (WCAG AA contrast for text) on the palette's background.
 import { THEME } from '@/config';
 
 export const ACCENT_PRESETS = {
@@ -16,8 +17,74 @@ export const ACCENT_PRESETS = {
 export type AccentPreset = keyof typeof ACCENT_PRESETS;
 export type AccentSetting = AccentPreset | { light: string; dark: string };
 
-// Page backgrounds from global.css (--bg); the accent shades are checked against these.
-const BG = { light: '#fbfbfa', dark: '#0f1013' };
+/** Every colour token except the accent ones, for one mode. */
+export interface Palette {
+  '--bg': string;
+  '--bg-elev': string;
+  '--bg-muted': string;
+  '--text': string;
+  '--text-muted': string;
+  '--border': string;
+  '--code-bg': string;
+  '--shadow': string;
+  '--callout-tip': string;
+  '--callout-important': string;
+  '--callout-warning': string;
+  '--callout-caution': string;
+  /** Project status "Active". */
+  '--status-active': string;
+}
+
+export interface ThemeConfig {
+  accent: AccentSetting;
+  mode: 'system' | 'light' | 'dark';
+  /** Overrides for single tokens of the default palette. */
+  palette?: { light?: Partial<Palette>; dark?: Partial<Palette> };
+}
+
+export const PALETTE: { light: Palette; dark: Palette } = {
+  light: {
+    '--bg': '#fbfbfa',
+    '--bg-elev': '#ffffff',
+    '--bg-muted': '#f2f2ef',
+    '--text': '#1b1b1f',
+    '--text-muted': '#5d5e66',
+    '--border': '#e3e3df',
+    '--code-bg': '#f4f4f1',
+    '--shadow': '0 1px 2px rgb(0 0 0 / 0.04), 0 6px 24px -8px rgb(0 0 0 / 0.08)',
+    '--callout-tip': '#1a7f37',
+    '--callout-important': '#7c3aed',
+    '--callout-warning': '#a15c07',
+    '--callout-caution': '#c42b2b',
+    '--status-active': '#16a34a',
+  },
+  dark: {
+    '--bg': '#0f1013',
+    '--bg-elev': '#17181c',
+    '--bg-muted': '#1d1f24',
+    '--text': '#e8e8ec',
+    '--text-muted': '#9a9ba5',
+    '--border': '#2a2c33',
+    '--code-bg': '#16171b',
+    '--shadow': '0 1px 2px rgb(0 0 0 / 0.3), 0 8px 28px -10px rgb(0 0 0 / 0.6)',
+    '--callout-tip': '#4ade80',
+    '--callout-important': '#b197fc',
+    '--callout-warning': '#fbbf24',
+    '--callout-caution': '#f87171',
+    '--status-active': '#4ade80',
+  },
+};
+
+// Printing (the resume's "Save as PDF") always uses the light palette with these changes.
+const PRINT: Partial<Palette> = {
+  '--bg': '#ffffff',
+  '--bg-elev': '#ffffff',
+  '--text': '#111111',
+  '--text-muted': '#555555',
+  '--border': '#dddddd',
+  '--shadow': 'none',
+};
+
 const WHITE = '#ffffff';
 const BLACK = '#000000';
 
@@ -26,7 +93,7 @@ type RGB = [number, number, number];
 function parse(hex: string): RGB {
   const h = hex.replace('#', '');
   const full = h.length === 3 ? [...h].map((c) => c + c).join('') : h;
-  if (!/^[0-9a-f]{6}$/i.test(full)) throw new Error(`THEME.accent: "${hex}" is not a hex colour like #2f5bea`);
+  if (!/^[0-9a-f]{6}$/i.test(full)) throw new Error(`THEME: "${hex}" is not a hex colour like #2f5bea`);
   return [0, 2, 4].map((i) => parseInt(full.slice(i, i + 2), 16)) as RGB;
 }
 
@@ -60,32 +127,40 @@ function readable(color: string, bg: string, towards: string) {
   return towards;
 }
 
-export function accentTokens(setting: AccentSetting = THEME.accent) {
-  const { light, dark } = typeof setting === 'string' ? ACCENT_PRESETS[setting] : setting;
-  const onAccent = (c: string) => (contrast(c, WHITE) >= contrast(c, BLACK) ? WHITE : BG.dark);
+/** All colour tokens for light and dark mode: the palette (with THEME.palette overrides) plus the accent. */
+export function themeTokens(theme: ThemeConfig = THEME) {
+  const accent = typeof theme.accent === 'string' ? ACCENT_PRESETS[theme.accent] : theme.accent;
+  const light = { ...PALETTE.light, ...theme.palette?.light };
+  const dark = { ...PALETTE.dark, ...theme.palette?.dark };
+  const onAccent = (c: string) => (contrast(c, WHITE) >= contrast(c, BLACK) ? WHITE : dark['--bg']);
   return {
     light: {
-      '--accent': light,
-      '--accent-text': readable(light, BG.light, BLACK),
-      '--accent-soft': mix(BG.light, light, 0.1),
-      '--on-accent': onAccent(light),
+      ...light,
+      '--accent': accent.light,
+      '--accent-text': readable(accent.light, light['--bg'], BLACK),
+      '--accent-soft': mix(light['--bg'], accent.light, 0.1),
+      '--on-accent': onAccent(accent.light),
+      '--callout-note': 'var(--accent)',
     },
     dark: {
-      '--accent': dark,
-      '--accent-text': readable(dark, BG.dark, WHITE),
-      '--accent-soft': mix(BG.dark, dark, 0.14),
-      '--on-accent': onAccent(dark),
+      ...dark,
+      '--accent': accent.dark,
+      '--accent-text': readable(accent.dark, dark['--bg'], WHITE),
+      '--accent-soft': mix(dark['--bg'], accent.dark, 0.14),
+      '--on-accent': onAccent(accent.dark),
+      '--callout-note': 'var(--accent)',
     },
   };
 }
 
-/** CSS for <head>: light tokens, dark tokens, and light tokens again for print. */
-export function accentCss() {
-  const { light, dark } = accentTokens();
-  const decl = (t: Record<string, string>) => Object.entries(t).map(([k, v]) => `${k}:${v}`).join(';');
+/** CSS for <head>: light tokens, dark tokens, and light tokens (with PRINT) for print. */
+export function themeCss() {
+  const { light, dark } = themeTokens();
+  const decl = (scheme: string, t: Record<string, string>) =>
+    [`color-scheme:${scheme}`, ...Object.entries(t).map(([k, v]) => `${k}:${v}`)].join(';');
   return [
-    `:root{${decl(light)}}`,
-    `:root[data-theme='dark']{${decl(dark)}}`,
-    `@media print{:root[data-theme='dark']{${decl(light)}}}`,
+    `:root{${decl('light', light)}}`,
+    `:root[data-theme='dark']{${decl('dark', dark)}}`,
+    `@media print{:root,:root[data-theme='dark']{${decl('light', { ...light, ...PRINT })}}}`,
   ].join('\n');
 }

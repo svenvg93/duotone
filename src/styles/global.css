@@ -1,7 +1,8 @@
 /* ==========================================================================
    Design tokens
-   The active theme is set as <html data-theme="light|dark"> by an inline
-   script in BaseHead.astro (stored choice → OS preference → light).
+   Colours (--bg, --text, --accent, … and color-scheme) aren't set here: they
+   come from src/lib/theme.ts (palette + THEME in src/config.ts) and are
+   injected by ThemeHead.astro for <html data-theme="light|dark">.
    ========================================================================== */
 
 :root {
@@ -14,43 +15,6 @@
   --radius: 0.75rem;
   --radius-sm: 0.4rem;
   --header-h: 4rem;
-
-  color-scheme: light;
-  --bg: #fbfbfa;
-  --bg-elev: #ffffff;
-  --bg-muted: #f2f2ef;
-  --text: #1b1b1f;
-  --text-muted: #5d5e66;
-  --border: #e3e3df;
-  /* --accent, --accent-text, --accent-soft, --on-accent: set from THEME.accent
-     in src/config.ts (see src/lib/theme.ts, injected by BaseHead.astro). */
-  --code-bg: #f4f4f1;
-  --shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 6px 24px -8px rgb(0 0 0 / 0.08);
-
-  /* Callouts (> [!NOTE] etc.) */
-  --callout-note: var(--accent);
-  --callout-tip: #1a7f37;
-  --callout-important: #7c3aed;
-  --callout-warning: #a15c07;
-  --callout-caution: #c42b2b;
-}
-
-:root[data-theme='dark'] {
-  color-scheme: dark;
-  --bg: #0f1013;
-  --bg-elev: #17181c;
-  --bg-muted: #1d1f24;
-  --text: #e8e8ec;
-  --text-muted: #9a9ba5;
-  --border: #2a2c33;
-  --code-bg: #16171b;
-  --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 28px -10px rgb(0 0 0 / 0.6);
-
-  --callout-note: var(--accent);
-  --callout-tip: #4ade80;
-  --callout-important: #b197fc;
-  --callout-warning: #fbbf24;
-  --callout-caution: #f87171;
 }
 
 /* ==========================================================================
@@ -663,17 +627,7 @@ a.tag:hover,
    ========================================================================== */
 
 @media print {
-  :root,
-  :root[data-theme='dark'] {
-    color-scheme: light;
-    --bg: #fff;
-    --bg-elev: #fff;
-    --bg-muted: #f2f2ef;
-    --text: #111;
-    --text-muted: #555;
-    --border: #ddd;
-    --shadow: none;
-  }
+  /* Colours: the light palette, see PRINT in src/lib/theme.ts */
 
   /* Print the light variant of theme-aware images */
   :root[data-theme='dark'] .only-light {

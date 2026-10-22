@@ -33,6 +33,6 @@ Items marked ⭐ are the suggested next batch.
 
 - [x] **README screenshot**: needed for the [Astro themes directory](https://astro.build/themes/).
 - [ ] **Test the resume's "Save as PDF" output**: only the on-screen version has been checked.
-- [ ] **Status colors**: the green "Active" project status is hard-coded instead of being a theme color.
+- [x] **Status colors**: the green "Active" project status is hard-coded instead of being a theme color.
 - [x] **Code tabs flash**: a saved tab choice briefly shows the first tab on page load.
 - [ ] **Fonts**: consider one web font for headings (system fonts only now).

@@ -98,7 +98,8 @@ src/
 ├── pages/about.mdx      ← the About page
 ├── pages/404.astro      ← the "page not found" page
 ├── assets/              ← images for covers, posts and your avatar
-└── styles/global.css    ← colours, fonts and spacing
+├── lib/theme.ts         ← the default light and dark colours
+└── styles/global.css    ← fonts, spacing and the rest of the styling
 astro.config.mjs         ← site URL, Markdown and code highlighting
 ```
 
@@ -183,7 +184,24 @@ export const THEME = {
 ```
 
 The theme works out readable link and button text for any colour, so even a bright yellow stays legible.
-Other colours, such as the background and text, are at the top of `src/styles/global.css`.
+
+### Other colours
+
+The background, text, borders, code blocks, callouts and project status come from a light and a dark
+palette (`PALETTE` in `src/lib/theme.ts`). To change one of them, override it in `palette`:
+
+```ts title="src/config.ts"
+export const THEME = {
+  accent: 'blue',
+  mode: 'system',
+  palette: {
+    light: { '--bg': '#ffffff' },
+    dark: { '--bg': '#000000', '--text': '#f5f5f5' },
+  },
+};
+```
+
+You only list the colours you change. The browser bar colour, favicon and social preview cards follow along.
 
 ### Home page
 

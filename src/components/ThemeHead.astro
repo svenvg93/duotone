@@ -1,0 +1,71 @@
+---
+/**
+ * Everything the light/dark theme needs in <head>: the colour tokens from
+ * src/lib/theme.ts, the browser UI colour, and the script that picks the theme.
+ */
+import { THEME } from '@/config';
+import { themeCss, themeTokens } from '@/lib/theme';
+
+const { light, dark } = themeTokens();
+---
+
+<!-- Colours from src/lib/theme.ts and THEME in src/config.ts -->
+<style is:inline set:html={themeCss()}></style>
+
+{
+  THEME.mode === 'system' ? (
+    <>
+      <meta name="theme-color" content={light['--bg']} media="(prefers-color-scheme: light)" />
+      <meta name="theme-color" content={dark['--bg']} media="(prefers-color-scheme: dark)" />
+    </>
+  ) : (
+    <meta name="theme-color" content={(THEME.mode === 'dark' ? dark : light)['--bg']} />
+  )
+}
+
+<!--
+  Sets <html data-theme> before first paint to avoid a flash of the wrong colours.
+  Order: the visitor's choice (localStorage) → THEME.mode ('system' = device setting).
+  window.theme is used by ThemeToggle.astro.
+-->
+<script is:inline define:vars={{ defaultMode: THEME.mode }}>
+  (() => {
+    const root = document.documentElement;
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+
+    const stored = () => {
+      try {
+        return localStorage.getItem('theme');
+      } catch {
+        return null;
+      }
+    };
+    const preferred = () => (defaultMode === 'system' ? (media.matches ? 'dark' : 'light') : defaultMode);
+
+    const apply = (theme) => {
+      root.dataset.theme = theme;
+      for (const btn of document.querySelectorAll('.theme-toggle')) {
+        btn.setAttribute('aria-pressed', String(theme === 'dark'));
+      }
+    };
+
+    // An explicit choice; if it matches the default, forget it so the default applies again.
+    const set = (theme) => {
+      apply(theme);
+      try {
+        if (theme === preferred()) localStorage.removeItem('theme');
+        else localStorage.setItem('theme', theme);
+      } catch {}
+    };
+
+    window.theme = { stored, preferred, apply, set };
+    apply(stored() ?? preferred());
+
+    // Follow device changes when the default is 'system' and the visitor hasn't chosen.
+    media.addEventListener('change', () => {
+      if (!stored()) apply(preferred());
+    });
+
+    requestAnimationFrame(() => requestAnimationFrame(() => root.classList.add('theme-ready')));
+  })();
+</script>

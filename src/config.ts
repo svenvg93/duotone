@@ -1,6 +1,6 @@
 // Site-wide settings. Edit this file to make the theme yours.
 import type { ImageMetadata } from 'astro';
-import type { AccentSetting } from '@/lib/theme';
+import type { ThemeConfig } from '@/lib/theme';
 import avatar from '@/assets/profile/avatar.svg';
 import avatarDark from '@/assets/profile/avatar-dark.svg';
 
@@ -18,7 +18,7 @@ export const SITE = {
   postsPerPage: 10,
 };
 
-export const THEME: { accent: AccentSetting; mode: 'system' | 'light' | 'dark' } = {
+export const THEME: ThemeConfig = {
   // Links, buttons, tags, highlights and the favicon. A preset — 'blue', 'indigo',
   // 'violet', 'teal', 'green', 'orange', 'rose' — or your own colours:
   //   accent: { light: '#0f766e', dark: '#2dd4bf' },
@@ -27,6 +27,8 @@ export const THEME: { accent: AccentSetting; mode: 'system' | 'light' | 'dark' }
   // Theme for visitors who haven't used the toggle: 'system' follows their device setting,
   // 'light' or 'dark' always starts in that mode. A visitor's own choice is remembered either way.
   mode: 'system',
+  // Change single colours of the default palette (PALETTE in src/lib/theme.ts), e.g.:
+  //   palette: { light: { '--bg': '#ffffff' }, dark: { '--bg': '#000000' } },
 };
 
 interface HomeConfig {

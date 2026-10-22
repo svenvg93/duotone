@@ -28,39 +28,16 @@ import Icon from './Icon.astro';
 </style>
 
 <script>
-  const root = document.documentElement;
-  const media = window.matchMedia('(prefers-color-scheme: dark)');
-  // THEME.mode from config.ts, set by the inline script in BaseHead.astro.
-  const defaultMode = root.dataset.themeDefault ?? 'system';
-  const fallback = () => (defaultMode === 'system' ? (media.matches ? 'dark' : 'light') : defaultMode);
+  // window.theme is set up by the inline script in ThemeHead.astro.
+  type Theme = 'light' | 'dark';
+  const { theme } = window as unknown as {
+    theme: { apply(t: Theme): void; set(t: Theme): void };
+  };
+  const current = (): Theme => (document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
 
-  function apply(theme: 'light' | 'dark') {
-    root.dataset.theme = theme;
-    for (const btn of document.querySelectorAll('.theme-toggle')) {
-      btn.setAttribute('aria-pressed', String(theme === 'dark'));
-    }
-  }
-
-  apply(root.dataset.theme === 'dark' ? 'dark' : 'light');
+  theme.apply(current());
 
   for (const btn of document.querySelectorAll('.theme-toggle')) {
-    btn.addEventListener('click', () => {
-      const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
-      apply(next);
-      try {
-        // Explicit choice; if it matches the default, forget it so the default applies again.
-        if (next === fallback()) localStorage.removeItem('theme');
-        else localStorage.setItem('theme', next);
-      } catch {}
-    });
+    btn.addEventListener('click', () => theme.set(current() === 'dark' ? 'light' : 'dark'));
   }
-
-  // Follow device changes when the default is 'system' and the visitor hasn't chosen.
-  media.addEventListener('change', (e) => {
-    let stored = null;
-    try {
-      stored = localStorage.getItem('theme');
-    } catch {}
-    if (!stored && defaultMode === 'system') apply(e.matches ? 'dark' : 'light');
-  });
 </script>

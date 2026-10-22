@@ -1,9 +1,9 @@
 // The favicon, drawn in the accent colour from THEME in src/config.ts.
 // It follows the browser's light/dark preference (favicons can't see the site toggle).
-import { accentTokens } from '@/lib/theme';
+import { themeTokens } from '@/lib/theme';
 
 export function GET() {
-  const { light, dark } = accentTokens();
+  const { light, dark } = themeTokens();
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
   <style>rect{fill:${light['--accent']}}path{stroke:${light['--on-accent']}}@media (prefers-color-scheme:dark){rect{fill:${dark['--accent']}}path{stroke:${dark['--on-accent']}}}</style>
   <rect width="32" height="32" rx="8"/>

@@ -27,7 +27,8 @@ npm run check    # type-check
 | Name, bio, nav, socials    | `src/config.ts`                           |
 | Production URL / sub-path  | `site` and `base` in `astro.config.mjs`   |
 | Accent colour              | `THEME.accent` in `src/config.ts`         |
-| Other colours, fonts, spacing | tokens at the top of `src/styles/global.css` |
+| Other colours              | `THEME.palette` in `src/config.ts` (defaults in `src/lib/theme.ts`) |
+| Fonts, spacing             | tokens at the top of `src/styles/global.css` |
 | Home page text & sections  | `HOME` in `src/config.ts`                 |
 | Avatar (light + dark)      | `HOME.avatar` (images in `src/assets/profile/`) |
 | Resume                     | `src/data/resume.json`                    |
@@ -96,8 +97,27 @@ export const THEME = {
 
 The matching shades are derived at build time (`src/lib/theme.ts`): link text is darkened or lightened
 until it has at least 4.5:1 contrast on the background, and button text is black or white, whichever reads
-better. So even a bright yellow accent stays readable. Other colours (backgrounds, text, borders, callout
-types) are the tokens at the top of `src/styles/global.css`.
+better. So even a bright yellow accent stays readable.
+
+## Other colours
+
+Backgrounds, text, borders, code blocks, callout types and the project status are the light and dark
+palettes in `PALETTE` (`src/lib/theme.ts`). Change single colours from `src/config.ts` without editing it:
+
+```ts
+export const THEME = {
+  accent: 'blue',
+  mode: 'system',
+  palette: {
+    light: { '--bg': '#ffffff', '--text': '#111111' },
+    dark: { '--bg': '#000000' },
+  },
+};
+```
+
+These are the only place colours are set: the CSS custom properties, the browser `theme-color`, the
+accent contrast check, the favicon and the social preview cards all use them. Printing always uses the
+light palette.
 
 ## Dark / light mode
 
@@ -105,7 +125,7 @@ Set the starting mode with `THEME.mode` in `src/config.ts`: `'system'` (default)
 device, `'light'` or `'dark'` always starts in that mode. The toggle remembers a visitor's choice; picking the
 default mode again clears it, so the default applies again.
 
-The theme is stored on `<html data-theme="light|dark">`. An inline script in `BaseHead.astro` sets it
+The theme is stored on `<html data-theme="light|dark">`. An inline script in `ThemeHead.astro` sets it
 before first paint (stored choice → `THEME.mode`), so there's no flash.
 
 Code blocks use Shiki dual themes (`astro.config.mjs`) and switch with the site.
