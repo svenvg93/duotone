@@ -17,7 +17,8 @@ interface Props {
 
 const { post, headings, prev, next, projects = [] } = Astro.props;
 const { title, description, pubDate, updatedDate, tags, cover, coverDark, coverAlt } = post.data;
-const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+// h2/h3 only; `footnote-label` is the hidden heading Markdown adds above footnotes.
+const toc = headings.filter((h) => (h.depth === 2 || h.depth === 3) && h.slug !== 'footnote-label');
 ---
 
 <BaseLayout title={title} description={description} image={cover} card={`blog/${post.id}`} type="article">

@@ -44,7 +44,9 @@ export function headingLinks() {
           const text = ctx.textContent(node);
           const id = typeof node.properties?.id === 'string' ? node.properties.id : slugger.slug(text);
           ctx.setProperty(node, 'id', id);
-          if (!LINKED.has(node.tagName)) return;
+          // Visually hidden headings (like the "Footnotes" label Markdown adds) get no link.
+          const hidden = [node.properties?.className].flat().includes('sr-only');
+          if (!LINKED.has(node.tagName) || hidden) return;
 
           ctx.appendChild(node, {
             type: 'element',

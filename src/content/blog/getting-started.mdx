@@ -1,0 +1,252 @@
+---
+title: Getting started with Duotone
+description: Install the theme, make it yours in one config file, and publish it to GitHub Pages or any static host.
+pubDate: 2026-10-20
+tags: [duotone, setup]
+cover: ../../assets/blog/theme-cover.svg
+coverDark: ../../assets/blog/theme-cover-dark.svg
+coverAlt: A sun on a light half and a moon on a dark half
+---
+
+import CodeTabs from '@/components/CodeTabs.astro';
+
+Duotone is a blog and portfolio theme for [Astro](https://astro.build). This post walks through setting it
+up. The other sample posts cover [writing posts](../writing-a-new-post/), every
+[Markdown element](../text-and-typography/) the theme styles, and
+[projects, the resume and extra pages](../projects-resume-and-pages/).
+
+> [!TIP]
+> The sample posts are the theme's documentation. Read them on the demo site, then delete them when you add
+> your own content.
+
+## What you get
+
+- Light and dark mode that follows the visitor's system, with a toggle that remembers their choice
+- Images with a separate dark-mode version, for covers, diagrams and your avatar
+- A blog with cards, tags, pagination, an RSS feed and a table of contents that follows your reading
+- Project pages, a printable resume and Markdown pages such as About
+- Search, callouts, code tabs, copy buttons and generated social preview images
+- One accent colour that you pick, applied everywhere
+
+## Install
+
+You need [Node.js](https://nodejs.org) 22.23 or newer. Get the code, install the dependencies and start the
+development server:
+
+<CodeTabs group="pkg">
+
+```sh title="npm"
+git clone https://github.com/svenvg93/duotone.git my-site
+cd my-site
+npm install
+npm run dev
+```
+
+```sh title="pnpm"
+git clone https://github.com/svenvg93/duotone.git my-site
+cd my-site
+pnpm install
+pnpm dev
+```
+
+```sh title="yarn"
+git clone https://github.com/svenvg93/duotone.git my-site
+cd my-site
+yarn
+yarn dev
+```
+
+</CodeTabs>
+
+Open `http://localhost:4321`. Changes to content and config show up as soon as you save.
+
+The other commands you'll use:
+
+<CodeTabs group="pkg">
+
+```sh title="npm"
+npm run build     # build the site into dist/, including the search index
+npm run preview   # serve the build locally
+npm run check     # type-check config and content
+```
+
+```sh title="pnpm"
+pnpm build        # build the site into dist/, including the search index
+pnpm preview      # serve the build locally
+pnpm check        # type-check config and content
+```
+
+```sh title="yarn"
+yarn build        # build the site into dist/, including the search index
+yarn preview      # serve the build locally
+yarn run check    # type-check config and content ("yarn check" is a built-in command)
+```
+
+</CodeTabs>
+
+Pick a tab once and every code tab on the site switches with it, also on later visits.
+
+## Where things live
+
+```text
+src/
+├── config.ts            ← site settings: name, menu, colour, home page
+├── content/
+│   ├── blog/            ← posts (.md or .mdx)
+│   └── projects/        ← projects (.md or .mdx)
+├── data/resume.json     ← your resume (JSON Resume format)
+├── pages/about.mdx      ← the About page
+├── pages/404.astro      ← the "page not found" page
+├── assets/              ← images for covers, posts and your avatar
+└── styles/global.css    ← colours, fonts and spacing
+astro.config.mjs         ← site URL, Markdown and code highlighting
+```
+
+## Make it yours
+
+Almost everything is set in `src/config.ts`. The type check (`npm run check`) tells you when a setting is
+wrong, for example a misspelled option.
+
+### Site details
+
+```ts title="src/config.ts"
+export const SITE = {
+  title: 'Alex Doe', // shown in the header and browser tab
+  description: 'Software engineer writing about …', // default meta description
+  author: 'Alex Doe',
+  role: 'Software Engineer',
+  location: 'Amsterdam, NL',
+  email: 'hello@example.com',
+  postList: 'cards', // 'cards' or 'compact' (date + title, grouped by year)
+  postsPerPage: 10, // 0 shows every post on one page
+};
+```
+
+### Menu and social links
+
+`NAV` is the header menu and `SOCIALS` the icons in the footer and on the home page. A social link's `icon`
+must be one of the icons in `src/components/Icon.astro`, such as `github`, `linkedin`, `mastodon`, `rss` or
+`mail`.
+
+```ts title="src/config.ts"
+export const NAV = [
+  { label: 'Blog', href: '/blog/' },
+  { label: 'Projects', href: '/projects/' },
+  { label: 'Resume', href: '/resume/' },
+  { label: 'About', href: '/about/' },
+];
+```
+
+To use a network that has no icon yet, add one to `ICONS` in `src/components/Icon.astro`. An icon is the
+inside of a 24 × 24 SVG: copy the `path` from an icon set such as [Simple Icons](https://simpleicons.org)
+or [Lucide](https://lucide.dev), then use its name in `SOCIALS`:
+
+```ts title="src/components/Icon.astro"
+const ICONS = {
+  // …
+  bluesky: '<path fill="currentColor" stroke="none" d="…" />',
+};
+```
+
+```ts title="src/config.ts"
+{ label: 'Bluesky', href: 'https://bsky.app/profile/you.bsky.social', icon: 'bluesky' },
+```
+
+The type check reports an icon name that doesn't exist.
+
+### Light and dark mode
+
+The site follows the visitor's device setting until they press the sun/moon button in the header; after
+that, their choice is remembered on every visit. To start in one mode regardless of the device, change
+`mode`:
+
+```ts title="src/config.ts"
+export const THEME = {
+  accent: 'blue',
+  mode: 'system', // 'system', 'light' or 'dark'
+};
+```
+
+Visitors can still switch with the button. Choosing the default mode again forgets their choice, so the site
+goes back to following your setting.
+
+### Accent colour
+
+Links, buttons, tags, highlights and the favicon share one accent colour. Pick a preset or give your own
+colours for light and dark mode:
+
+```ts title="src/config.ts"
+export const THEME = {
+  accent: 'blue', // blue, indigo, violet, teal, green, orange or rose
+  // accent: { light: '#0f766e', dark: '#2dd4bf' },
+};
+```
+
+The theme works out readable link and button text for any colour, so even a bright yellow stays legible.
+Other colours, such as the background and text, are at the top of `src/styles/global.css`.
+
+### Home page
+
+`HOME` holds the headline, intro, buttons and avatar, and which sections appear below them:
+
+```ts title="src/config.ts"
+sections: [
+  { type: 'posts', title: 'Recent writing', count: 5, linkLabel: 'All posts' },
+  { type: 'projects', title: 'Selected projects', count: 4, linkLabel: 'All projects' },
+],
+```
+
+Change the order to swap the sections, change `count` to show more or fewer items, or remove a line to hide
+that section. The projects section shows projects marked `featured: true`, or all of them if none are.
+
+Replace `src/assets/profile/avatar.svg` and `avatar-dark.svg` with your own photo, or point `HOME.avatar`
+at other files. Remove `avatar` to hide the portrait.
+
+## Publish
+
+### GitHub Pages
+
+The repository includes a workflow (`.github/workflows/deploy.yml`) that type-checks and builds every pull
+request and publishes `main` to GitHub Pages:
+
+1. Push the site to a GitHub repository.
+2. Under **Settings → Pages**, set **Source** to **GitHub Actions**.
+3. Push to `main`. The site appears at `https://<user>.github.io/<repo>/`.
+
+The workflow tells the build its address and sub-path (`/<repo>/`), so links, search, the feed and social
+preview images all work without changes.
+
+### Other hosts
+
+Netlify, Vercel, Cloudflare Pages and any other static host work too: use `npm run build` as the build
+command and `dist` as the output folder. Then set your address in `astro.config.mjs`:
+
+```js title="astro.config.mjs"
+export default defineConfig({
+  site: 'https://example.com', // your domain: used for the feed, sitemap and preview images
+  base: '/', // or '/blog' if the site lives under a sub-path
+});
+```
+
+> [!IMPORTANT]
+> Set `site` before you publish. Social networks need the full address of your preview images, and the RSS
+> feed needs it for every link.
+
+### The 404 page
+
+Visitors who follow a broken link see `src/pages/404.astro`, with a link back to the home page. Edit the
+text there. GitHub Pages and most static hosts pick up `404.html` from the build automatically.
+
+### Feed and sitemap
+
+The build also creates:
+
+- **An RSS feed** at `/rss.xml` with every published post: title, description, date and tags. Feed readers
+  find it from any page, and the RSS icon in the footer links to it.
+- **A sitemap** at `/sitemap-index.xml`, listing every page for search engines.
+
+Both use the `site` address from `astro.config.mjs`.
+
+## Next steps
+
+Continue with [writing a new post](../writing-a-new-post/).

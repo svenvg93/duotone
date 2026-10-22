@@ -27,6 +27,7 @@ npm run check    # type-check
 | Blog posts                 | `src/content/blog/*.md(x)`                |
 | Projects                   | `src/content/projects/*.md(x)`            |
 | About & other pages        | `src/pages/*.mdx` with `PageLayout`       |
+| 404 page                   | `src/pages/404.astro`                     |
 
 ## Home page
 
@@ -93,9 +94,12 @@ types) are the tokens at the top of `src/styles/global.css`.
 
 ## Dark / light mode
 
+Set the starting mode with `THEME.mode` in `src/config.ts`: `'system'` (default) follows the visitor's
+device, `'light'` or `'dark'` always starts in that mode. The toggle remembers a visitor's choice; picking the
+default mode again clears it, so the default applies again.
+
 The theme is stored on `<html data-theme="light|dark">`. An inline script in `BaseHead.astro` sets it
-before first paint (stored choice → OS preference), so there's no flash. The toggle remembers an explicit
-choice; picking the same theme as your OS clears the override so the site follows the OS again.
+before first paint (stored choice → `THEME.mode`), so there's no flash.
 
 Code blocks use Shiki dual themes (`astro.config.mjs`) and switch with the site.
 
@@ -268,7 +272,17 @@ CI. Edit `renderCard` there to change the design. Social sites need absolute URL
 
 Any static host works: run `npm run build` and upload `dist/`. Set `site` in `astro.config.mjs` to your
 URL, and `base` if the site lives under a sub-path. Internal links go through `url()` in
-`src/lib/url.ts`, so they follow `base` automatically.
+`src/lib/url.ts`, so they follow `base` automatically. Do the same for links in components you add:
+
+```astro
+---
+import { url } from '@/lib/url';
+---
+
+<a href={url('/projects/')}>Projects</a> <!-- → /duotone/projects/ under a sub-path -->
+```
+
+In Markdown, use relative links (`../other-post/`) instead.
 
 **GitHub Pages:** `.github/workflows/deploy.yml` type-checks and builds every pull request, and deploys
 `main` to Pages. Enable it under *Settings → Pages → Source: GitHub Actions*. The workflow passes the Pages

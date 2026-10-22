@@ -30,6 +30,9 @@ import Icon from './Icon.astro';
 <script>
   const root = document.documentElement;
   const media = window.matchMedia('(prefers-color-scheme: dark)');
+  // THEME.mode from config.ts, set by the inline script in BaseHead.astro.
+  const defaultMode = root.dataset.themeDefault ?? 'system';
+  const fallback = () => (defaultMode === 'system' ? (media.matches ? 'dark' : 'light') : defaultMode);
 
   function apply(theme: 'light' | 'dark') {
     root.dataset.theme = theme;
@@ -45,19 +48,19 @@ import Icon from './Icon.astro';
       const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
       apply(next);
       try {
-        // Explicit choice; if it matches the OS setting, keep following the OS instead.
-        if ((next === 'dark') === media.matches) localStorage.removeItem('theme');
+        // Explicit choice; if it matches the default, forget it so the default applies again.
+        if (next === fallback()) localStorage.removeItem('theme');
         else localStorage.setItem('theme', next);
       } catch {}
     });
   }
 
-  // Follow OS changes unless the visitor has made an explicit choice.
+  // Follow device changes when the default is 'system' and the visitor hasn't chosen.
   media.addEventListener('change', (e) => {
     let stored = null;
     try {
       stored = localStorage.getItem('theme');
     } catch {}
-    if (!stored) apply(e.matches ? 'dark' : 'light');
+    if (!stored && defaultMode === 'system') apply(e.matches ? 'dark' : 'light');
   });
 </script>

@@ -18,12 +18,15 @@ export const SITE = {
   postsPerPage: 10,
 };
 
-export const THEME: { accent: AccentSetting } = {
+export const THEME: { accent: AccentSetting; mode: 'system' | 'light' | 'dark' } = {
   // Links, buttons, tags, highlights and the favicon. A preset — 'blue', 'indigo',
   // 'violet', 'teal', 'green', 'orange', 'rose' — or your own colours:
   //   accent: { light: '#0f766e', dark: '#2dd4bf' },
   // Matching shades (readable link text, soft highlight, button text) are derived automatically.
   accent: 'blue',
+  // Theme for visitors who haven't used the toggle: 'system' follows their device setting,
+  // 'light' or 'dark' always starts in that mode. A visitor's own choice is remembered either way.
+  mode: 'system',
 };
 
 interface HomeConfig {
