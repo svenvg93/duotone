@@ -22,15 +22,13 @@
   --text: #1b1b1f;
   --text-muted: #5d5e66;
   --border: #e3e3df;
-  --accent: #2f5bea;
-  --accent-text: #1f45c6;
-  --accent-soft: #e8eefe;
-  --on-accent: #ffffff;
+  /* --accent, --accent-text, --accent-soft, --on-accent: set from THEME.accent
+     in src/config.ts (see src/lib/theme.ts, injected by BaseHead.astro). */
   --code-bg: #f4f4f1;
   --shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 6px 24px -8px rgb(0 0 0 / 0.08);
 
   /* Callouts (> [!NOTE] etc.) */
-  --callout-note: #2f5bea;
+  --callout-note: var(--accent);
   --callout-tip: #1a7f37;
   --callout-important: #7c3aed;
   --callout-warning: #a15c07;
@@ -45,14 +43,10 @@
   --text: #e8e8ec;
   --text-muted: #9a9ba5;
   --border: #2a2c33;
-  --accent: #7c9bff;
-  --accent-text: #9db4ff;
-  --accent-soft: #1c2440;
-  --on-accent: #0f1013;
   --code-bg: #16171b;
   --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 28px -10px rgb(0 0 0 / 0.6);
 
-  --callout-note: #7c9bff;
+  --callout-note: var(--accent);
   --callout-tip: #4ade80;
   --callout-important: #b197fc;
   --callout-warning: #fbbf24;
@@ -644,8 +638,6 @@ a.tag:hover,
     --text: #111;
     --text-muted: #555;
     --border: #ddd;
-    --accent: #1f45c6;
-    --accent-text: #1f45c6;
     --shadow: none;
   }
 

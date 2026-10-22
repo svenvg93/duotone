@@ -1,5 +1,6 @@
 // Site-wide settings. Edit this file to make the theme yours.
 import type { ImageMetadata } from 'astro';
+import type { AccentSetting } from '@/lib/theme';
 import avatar from '@/assets/profile/avatar.svg';
 import avatarDark from '@/assets/profile/avatar-dark.svg';
 
@@ -13,6 +14,14 @@ export const SITE = {
   // How posts are listed on the blog, tag and home pages: image cards, or a compact
   // date + title list (grouped by year on /blog).
   postList: 'cards' as 'cards' | 'compact',
+};
+
+export const THEME: { accent: AccentSetting } = {
+  // Links, buttons, tags, highlights and the favicon. A preset — 'blue', 'indigo',
+  // 'violet', 'teal', 'green', 'orange', 'rose' — or your own colours:
+  //   accent: { light: '#0f766e', dark: '#2dd4bf' },
+  // Matching shades (readable link text, soft highlight, button text) are derived automatically.
+  accent: 'blue',
 };
 
 interface HomeConfig {

@@ -19,7 +19,8 @@ npm run check    # type-check
 | -------------------------- | ----------------------------------------- |
 | Name, bio, nav, socials    | `src/config.ts`                           |
 | Production URL / sub-path  | `site` and `base` in `astro.config.mjs`   |
-| Colours, fonts, spacing    | tokens at the top of `src/styles/global.css` |
+| Accent colour              | `THEME.accent` in `src/config.ts`         |
+| Other colours, fonts, spacing | tokens at the top of `src/styles/global.css` |
 | Home page text & sections  | `HOME` in `src/config.ts`                 |
 | Avatar (light + dark)      | `HOME.avatar` (images in `src/assets/profile/`) |
 | Resume                     | `src/data/resume.json`                    |
@@ -71,6 +72,24 @@ The hardware and software I use every day…
 Callouts, heading links, code blocks and components all work, and pages are included in search. In MDX
 pages `url` is a reserved name (the page's own URL), so import the base-path helper under another name:
 `import { url as withBase } from '@/lib/url'`.
+
+## Accent colour
+
+Links, buttons, tags, highlights, the note callout and the favicon use one accent colour, set in
+`src/config.ts`:
+
+```ts
+export const THEME = {
+  accent: 'blue', // 'blue' | 'indigo' | 'violet' | 'teal' | 'green' | 'orange' | 'rose'
+  // or your own colours for each mode:
+  // accent: { light: '#0f766e', dark: '#2dd4bf' },
+};
+```
+
+The matching shades are derived at build time (`src/lib/theme.ts`): link text is darkened or lightened
+until it has at least 4.5:1 contrast on the background, and button text is black or white, whichever reads
+better. So even a bright yellow accent stays readable. Other colours (backgrounds, text, borders, callout
+types) are the tokens at the top of `src/styles/global.css`.
 
 ## Dark / light mode
 
